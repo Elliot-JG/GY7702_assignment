@@ -1,0 +1,85 @@
+---
+title: "GY7702 Assignment"
+author: "Elliot Greatrix"
+date: "04/11/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list = ls())
+```
+
+```{r load_libraries, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(palmerpenguins)
+library(dplyr)
+library(knitr)
+library(readr)
+library(tinytex)
+```
+
+
+# Question 1
+
+A vector of 25 numbers between 1 and 7 are listed below. These values represent
+answers to a survey question 
+
+## NA 3 4 4 5 2 4 NA 6 3 5 4 0 5 7 5 NA 5 2 4 NA 3 3 5 NA
+
+*  1 = Completely disagree
+*  2 = Disagree
+*  3 = Somehow disagree
+*  4 = Neither agree or disagree
+*  5 = Somehow agree
+*  6 = Agree
+*  7 = Completely agree
+* NA = missing value
+
+
+## Question 1.1 
+
+Write the code necessary to check whether all participants to the survey either 
+completely disagree or completely agree, once the missing values are excluded
+
+First, let's create the vector. 
+```{r}
+num <- c(NA, 3, 4, 4, 5, 2, 4, NA, 6, 3, 5, 4, 0, 5, 7, 5, NA, 5, 2, 4, NA, 3, 3, 5, NA)
+```
+
+Then, remove missing values.
+```{r}
+num <- na.omit(num)
+```
+
+And finally check whether all students either completely agree (= 7).
+```{r}
+students_agree_complete <- all(num == 7)
+```
+
+Or, completely disagree (=1).
+```{r}
+students_disagree_complete <- all(num == 1)
+```
+
+
+## Question 1.2
+
+Write the code necessary to extract the indexes related to the participants 
+in the survey who at least somehow agree or more.
+
+In the vector *num*, *which* students selected values between 5 and 7. 
+```{r}
+students_agree <- which(num %in% c(5:7))
+```
+
+
+Clear the environment 
+```{r}
+rm(list = ls())
+```
+
+
+
+
+
