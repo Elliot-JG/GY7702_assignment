@@ -20,11 +20,11 @@ This assignment is broken down into 4 stages:
 
 ## Prerequisites
 The dependencies for the assignment are:
-* tidyverse
-* dplyr
-* knitr
-* palmerpenguins
-* readr
+* [tidyverse](https://www.tidyverse.org/)
+* [dplyr](https://dplyr.tidyverse.org/)
+* [knitr](https://yihui.org/knitr/)
+* [palmerpenguins](https://github.com/allisonhorst/palmerpenguins)
+* [readr](https://readr.tidyverse.org/)
 
 ## Data 
 The data used in this assignment is in [GY7702_data](https://github.com/Elliot-JG/GY7702_assignment/tree/main/GY7702_data). There are two .csv files:
@@ -34,12 +34,11 @@ UK Covid-19 daily and cumulative cases 01/03/2020 - 17/10/2020
 UK population per local authority 
 
 ## Usage
-This assignment can be ran locally in R, dependent on the [Prerequisites](#prerequisites)\
-To clone this git repository using [Git Bash](https://gitforwindows.org/): \
+* To clone this git repository using [Git Bash](https://gitforwindows.org/):
 ```r
 $ git clone https://github.com/Elliot-JG/GY7702_assignment.git
 ```
-Alternatively, press the green button at the top of this page and unzip the folder in an appropriate place  ![](https://github.com/Elliot-JG/GY7702_assignment/blob/main/README_graphics/Code_download_updated_url.PNG)  
+* Alternatively, press the green button at the top of this page and unzip the folder in an appropriate place  ![](https://github.com/Elliot-JG/GY7702_assignment/blob/main/README_graphics/Code_download_updated_url.PNG)  
 
  
 
