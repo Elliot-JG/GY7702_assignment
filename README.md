@@ -1,6 +1,6 @@
 # GY7702 Assignment repository 
 
-## Introduction
+## :wave: Introduction
 This is a repository for the [**GY7702 R for Data Science**](https://le.ac.uk/modules/2020/gy7702) assignment at the University of Leicester. 
 The aim of this assignment was to explore various aspects of the R programming language through the use of popular libraries and real-life data. 
 Additionally, this was a fantastic exercise in the exploration of Github, README.md files and professional coding practice. 
