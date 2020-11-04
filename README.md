@@ -5,6 +5,8 @@ This is a repository for the [**GY7702 R for Data Science**](https://le.ac.uk/mo
 The aim of this assignment was to explore various aspects of the R programming language through the use of popular libraries and real-life data. 
 Additionally, this was a fantastic exercise in the exploration of Github, README.md files and professional coding practice. 
 
+PS. I love emojis 
+
 This assignment is broken down into 4 stages: 
 
 1. Basic vector manipulation with example survey data. 
