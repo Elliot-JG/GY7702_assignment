@@ -13,10 +13,10 @@ This assignment is broken down into 4 stages:
 4. Analysis of COVID-19 cases with accompanying UK population data
 
 ## Table of contents 
-* [General info](introduction)
-* [Prerequisites](prerequisites)
-* [Data](data)
-* [Usage](usage)
+* [General info](#introduction)
+* [Prerequisites](#prerequisites)
+* [Data](#data)
+* [Usage](#usage)
 
 ## Prerequisites
 The dependencies for the assignment are:
@@ -34,7 +34,7 @@ UK Covid-19 daily and cumulative cases 01/03/2020 - 17/10/2020
 UK population per local authority 
 
 ## Usage
-This assignment can be ran locally in R, dependent on the [Prerequisites](prerequisites)\
+This assignment can be ran locally in R, dependent on the [Prerequisites](#prerequisites)\
 To clone this git repository using [Git Bash](https://gitforwindows.org/): \
 ```r
 $ git clone https://github.com/Elliot-JG/GY7702_assignment.git
