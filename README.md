@@ -12,13 +12,13 @@ This assignment is broken down into 4 stages:
 3. Reading data with *readr* and utilizing UK COVID-19 data 
 4. Analysis of COVID-19 cases with accompanying UK population data
 
-## Table of contents 
+## :dog: Table of contents 
 * [General info](#introduction)
 * [Prerequisites](#prerequisites)
 * [Data](#data)
 * [Usage](#usage)
 
-## Prerequisites
+## :rose: Prerequisites
 The dependencies for the assignment are:
 * [tidyverse](https://www.tidyverse.org/)
 * [dplyr](https://dplyr.tidyverse.org/)
@@ -26,21 +26,21 @@ The dependencies for the assignment are:
 * [palmerpenguins](https://github.com/allisonhorst/palmerpenguins)
 * [readr](https://readr.tidyverse.org/)
 
-## Data 
+## :evergreen_tree: Data 
 The data used in this assignment is in [GY7702_data](https://github.com/Elliot-JG/GY7702_assignment/tree/main/GY7702_data). There are two .csv files:
 * covid19_cases_20200301_20201017.csv\
 UK Covid-19 daily and cumulative cases 01/03/2020 - 17/10/2020 
 * lad19_population.csv\
 UK population per local authority 
 
-## Usage
+## :lemon: Usage
 * To clone this git repository using [Git Bash](https://gitforwindows.org/):
 ```r
 $ git clone https://github.com/Elliot-JG/GY7702_assignment.git
 ```
 * Alternatively, press the green button at the top of this page and unzip the folder in an appropriate place  ![](https://github.com/Elliot-JG/GY7702_assignment/blob/main/README_graphics/Code_download_updated_url.PNG)  
 
-## Guide to the files 
+## :octopus: Guide to the files 
 * **Master_code.R**  
   + In this file you will find 4 sections that address the 4 questions of the assignment
   + Highly commented, raw code with no further comments on the data analysis
