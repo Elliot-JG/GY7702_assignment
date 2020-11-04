@@ -40,5 +40,14 @@ $ git clone https://github.com/Elliot-JG/GY7702_assignment.git
 ```
 * Alternatively, press the green button at the top of this page and unzip the folder in an appropriate place  ![](https://github.com/Elliot-JG/GY7702_assignment/blob/main/README_graphics/Code_download_updated_url.PNG)  
 
- 
+## Guide to the files 
+* **Master_code.R**  
+  + In this file you will find 4 sections that address the 4 questions of the assignment
+  + Highly commented, raw code with no further comments on the data analysis
+* **GY7702_Greatrix.Rmd** 
+  + An R Markdown version of *Master_code.R*.
+  + Contains further analysis of the data such as short paragraphs on what the data tells us  
+  + While I am working in *Master_code.R* now, I predict that the work flow will move over mainly to this file 
+* **GY7702_Greatrix.pdf**
+  + A .pdf file created when *GY7702_Greatrix.Rmd* is executed or *knitted*
 
