@@ -39,7 +39,7 @@ To clone this git repository using [Git Bash](https://gitforwindows.org/):
 '''
 $ git clone https://github.com/Elliot-JG/covid_19_analysis.git
 '''
-Alternatively, press the [green button](https://github.com/Elliot-JG/GY7702_assignment/blob/main/README_graphics/Code_download.PNG)  
+Alternatively, press [green button](https://github.com/Elliot-JG/GY7702_assignment/blob/main/README_graphics/Code_download.PNG)  
 
  
 
