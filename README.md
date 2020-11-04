@@ -1,4 +1,4 @@
-# GY7702 Assignment repository 
+# GY7702 Assignment 
 
 ## :wave: Introduction
 This is a repository for the [**GY7702 R for Data Science**](https://le.ac.uk/modules/2020/gy7702) assignment at the University of Leicester. 
