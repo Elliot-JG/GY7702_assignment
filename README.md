@@ -29,18 +29,17 @@ The dependencies for the assignment are:
 ## Data 
 The data used in this assignment is in [GY7702_data](https://github.com/Elliot-JG/GY7702_assignment/tree/main/GY7702_data). There are two .csv files:
 * covid19_cases_20200301_20201017.csv\
-UK Covid-19 daily and cumulatively cases 01/03/2020 - 17/10/2020 
+UK Covid-19 daily and cumulative cases 01/03/2020 - 17/10/2020 
 * lad19_population.csv\
 UK population per local authority 
 
 ## Usage
-This assignment can be ran locally in R, dependent on the [Prerequisites](prerequisites)
-To clone this git repository using [Git Bash](https://gitforwindows.org/):\
-
-'''{r}
+This assignment can be ran locally in R, dependent on the [Prerequisites](prerequisites)\
+To clone this git repository using [Git Bash](https://gitforwindows.org/): \
+```r
 $ git clone https://github.com/Elliot-JG/GY7702_assignment.git
-'''
-Alternatively, press the green button at the top of this page and unzip the folder in an appropriate place  ![](https://github.com/Elliot-JG/GY7702_assignment/blob/main/README_graphics/Code_download.PNG)  
+```
+Alternatively, press the green button at the top of this page and unzip the folder in an appropriate place  ![](https://github.com/Elliot-JG/GY7702_assignment/blob/main/README_graphics/Code_download_updated_url.PNG)  
 
  
 
