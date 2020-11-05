@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 rm(list = ls())
 ```
 
+The libraries that were used in this assignment: 
 ```{r load_libraries, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(palmerpenguins)
@@ -73,9 +74,71 @@ In the vector *num*, *which* students selected values between 5 and 7.
 students_agree <- which(num %in% c(5:7))
 ```
 
+# Question 2
 
-Clear the environment 
+## Question 2.2
+
+The library *palmerpenguins* is a data set of penguin characteristics in the table *penguins*. This data was made available by Dr. Kristen Gorman.
+
+The library is already installed and loaded, so let's dive into some analysis.   
+ 
+Some of the penguins in table hold NA values for certain attributes. Due to the analysis that we are going to do, these need to be removed
 ```{r}
+pen <- na.omit(penguins)
+```
+
+Ultimately, We are going to write the code necessary to create a table showing species, island, bill length and body mass of the 10 Gentoo penguins in the penguins table with the highest body mass. 
+
+As this task requires multiple steps, it will be more efficient to start a 'pipe'.
+Lets send the 'na omitted' table, *pen* down the pipe.
+```{r}
+pen %>%
+```
+
+
+First, let's select all the attributes that the questions asks for
+```{r}
+ select(species, island, bill_length_mm, bill_depth_mm,)%>%
+```
+
+and select all the 'Gentoo' penguins.
+```{r}
+filter(species == "Gentoo")%>%
+```
+
+The question asks to return the 10 Gentoo penguins with the highest body mass. 
+This can be achieved with *slice_max*
+```{r}
+slice_max(body_mass_g, n = 10)
+```
+
+## Question 2.3
+
+Next, we're going to write the code necessary to create a table showing the 
+average bill length per island, ordered by average bill length.
+
+Similarly, lets open a new pipe operator
+```{r}
+pen %>%
+```
+
+and select the appropriate attributes.
+```{r}
+select(species, island, bill_length_mm, bill_depth_mm,)%>%
+```
+
+Order by *bill_length_mm*. By default *arrange* sorts in ascending order.
+```{r}
+arrange(bill_length_mm)%>%
+```
+
+As the question asks for *per island*, we can use *group_by* to execute the 
+average for each island
+```{r}
+group_by(island)%>%
+```
+
+```{r, echo=FALSE}
 rm(list = ls())
 ```
 
