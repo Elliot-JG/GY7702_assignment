@@ -134,7 +134,14 @@ covid_data_long_cum <- covid_data_wide %>%
 # Merge the 2 dataframes to 
 merge(covid_data_long_cum,covid_data_long_new, by="area_name")
 
+## Question 3 
 
+### Question 3.1
+
+
+
+
+### Questions 3.2
 
 
   
