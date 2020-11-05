@@ -43,9 +43,12 @@ library(readr)
    
 # Select the species "Gentoo"
  filter(species == "Gentoo")%>%
-   
+
+# Order body_mass_g in ascending 
+ arrange(-body_mass_g)%>%
+ 
 # Return the 10 heaviest gentoo penguins 
- slice_max(body_mass_g, n = 10)
+ slice_head(n = 10)
 
 # Order the data by bill length (mm) in ascending/ descending order
  pen %>%
