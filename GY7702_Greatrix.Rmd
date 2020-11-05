@@ -1,10 +1,16 @@
+
 ---
-title: "GY7702 Assignment"
-author: "Elliot Greatrix"
-"MSc Satellite Data Science at the University of Leicester"
-date: "04/11/2020"
+title: GY7702 Assignment
+subtitle: MSc Satellite Data Science at the University of Leicester
+author: Elliot Greatrix
+date: 04/11/2020
 output: pdf_document
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list = ls())
+```
 
 # Introduction 
 
@@ -36,13 +42,9 @@ Elliot would like to acknowledge that this document includes teaching materials 
 R for Data Science by Garrett Grolemund and Hadley Wickham, O’Reilly Media, 2016. [See online book](https://r4ds.had.co.nz/)  
 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-rm(list = ls())
-```
-
-
-
+### Note to reader
+Where a function is mentioned for the **first time**, a brief explanation will be given before the code block. 
+Thereafter, this explanation will be dismissed. 
 
 # Question 1
 
@@ -87,7 +89,7 @@ students_disagree_complete <- all(num == 1)
 **Write the code necessary to extract the indexes related to the participants 
 in the survey who at least somehow agree or more.**
 
-In the vector *num*, *which* students selected values between 5 and 7. 
+In the vector ```num```, ```which``` students selected values between 5 and 7. 
 ```{r}
 students_agree <- which(num %in% c(5:7))
 ```
@@ -99,18 +101,18 @@ students_agree <- which(num %in% c(5:7))
 **Write the code necessary to create a table showing species, island, bill length and body mass
 of the 10 Gentoo penguins in the penguins table with the highest body mass**
 
-The library [*palmerpenguins*](https://allisonhorst.github.io/palmerpenguins/articles/intro.html) was created by Dr. Kristen Gorman and holds 2 data sets. For this assignment, we will work with *penguins*, a table containing 8 measured variables from 344 penguins! 
+The library [```palmerpenguins```](https://allisonhorst.github.io/palmerpenguins/articles/intro.html) was created by Dr. Kristen Gorman and holds 2 data sets. For this assignment, we will work with ```penguins```, a table containing 8 measured variables from 344 penguins! 
 
-Some of the penguins in *penguins* hold NA values for certain variables. 
+Some of the penguins in ```penguins``` hold NA values for certain variables. 
 Due to the analysis that we are going to do, these need to be removed
 ```{r}
 pen <- na.omit(penguins)
 ```
 
 As this task requires multiple steps, it will be more efficient to start a pipe.
-Lets send the *na omitted* table, *pen* down the pipe.
+Lets send the *na omitted* table, ```pen``` down the pipe.
 
-It is important to note that the functions in the pipe operator do not require the first argument, *pen* because it is being 'fed down' the pipe. For more information on pipes, click [here](https://www.rdocumentation.org/packages/magrittr/versions/1.5/topics/%25%3E%25)
+It is important to note that the functions in the pipe operator do not require the first argument, ```pen``` because it is being 'fed down' the pipe. For more information on pipes, click [here](https://www.rdocumentation.org/packages/magrittr/versions/1.5/topics/%25%3E%25)
 ```{r}
 pen %>%
   # First, let's select all the variables that the question asks for
@@ -135,11 +137,11 @@ kable()
 **write the code necessary to create a table showing the 
 average bill length per island, ordered by average bill length.**
 
-As this question states *per island*, we will use *group_by* to perform an average bill length for each island. 
-We will also see *mean()* to determine average. This is a function built into R.
+As this question states ```per island```, we will use ```group_by``` to perform an average bill length for each island. 
+We will also see ```mean()``` to determine average. This is a function built into R.
 
 After the data set is grouped by island, average bill length will be calculated.
-The result will be appended to *pen* in a column called *avg_bill_length* using the *mutate* function.
+The result will be appended to ```pen``` in a column called ```avg_bill_length``` using the ```mutate``` function.
 ```{r}
 pen %>%
   
@@ -167,18 +169,15 @@ kable()
 proportion between bill length and bill depth by species.**
 
 The *proportion between bill length and bill depth* will be calculated as 
-bill_length_mm / bill_depth_mm. This will return a unit-less
-measure which will be called *bl_bd*
+```bill_length_mm``` / ```bill_depth_mm```. This will return a unit-less
+measure which will be called ```bl_bd```
 
 R also contains inbuilt functions for obtaining the minimum, median and maximum 
-values from a vector. So by example, on line[] lets take the minimum *bill_length_mm* and 
-minimum *bill_depth_mm* and divide them to get the unit-less measurement 
-*min_bl_bd*. 
+values from a vector. So by example after ```select()``` and ```group_by()```,  lets take the minimum ```bill_length_mm``` and 
+minimum ```bill_depth_mm``` and divide them to get the unit-less measurement ```min_bl_bd```. 
 
-```{r}
-
-pen %>%
-  
+```{r, eval=FALSE}
+  pen %>%
   # Select the necessary attributes 
   select(species, island, bill_length_mm, bill_depth_mm,)%>%
   
@@ -187,6 +186,17 @@ pen %>%
   
   # Append the proportions to the table pen, using mutate
   mutate(min_bl_bd = min(bill_length_mm) / min(bill_depth_mm))%>%
+```
+
+
+
+
+
+
+
+Then repeat this for the  median and maximum values  
+
+```{r, eval=FALSE}
   mutate(med_bl_bd = median(bill_length_mm) / median(bill_depth_mm))%>%
   mutate(max_bl_bd = max(bill_length_mm) / max(bill_depth_mm))%>%
   
@@ -196,6 +206,37 @@ pen %>%
 slice_head(n = 3)%>%   
 kable()
 ```
+
+```{r, echo = FALSE}
+pen %>%
+  select(species, island, bill_length_mm, bill_depth_mm,)%>%
+  group_by(species)%>%
+  mutate(min_bl_bd = min(bill_length_mm) / min(bill_depth_mm))%>%
+  mutate(med_bl_bd = median(bill_length_mm) / median(bill_depth_mm))%>%
+  mutate(max_bl_bd = max(bill_length_mm) / max(bill_depth_mm))%>%
+  subset(select = -c(bill_length_mm, bill_depth_mm))%>%
+  
+slice_head(n = 3)%>%   
+kable()
+```
+
+# Question 3
+
+## Question 3.1
+
+**Write the code necessary to load the data from** ***covid19_cases_20200301_20201017.csv*** **to a variable named covid_data**
+  
+The library ```readr``` contains the function ```read_csv()``` which, unsurprisingly allows us to read .csv (comma-separated value) files into R. 
+```{r, eval=FALSE}
+# Reading the COVID-19 .csv from a local directory 
+covid_data <- read_csv("C:/.../data/covid19_cases_20200301_20201017.csv")
+
+```
+
+```{r, echo=FALSE, message=FALSE}
+covid_data <- read_csv("C:/Users/44792/Desktop/R for data science/covid19_cases_20200301_20201017.csv")
+```
+
 
 
 ```{r, echo=FALSE}
