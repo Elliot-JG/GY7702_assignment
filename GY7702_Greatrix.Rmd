@@ -1,16 +1,23 @@
 ---
 title: "GY7702 Assignment"
 author: "Elliot Greatrix"
+"MSc Satellite Data Science at the University of Leicester"
 date: "04/11/2020"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-rm(list = ls())
-```
+# Introduction 
 
-The libraries that were used in this assignment: 
+This document was created to meet the requirements of GY7702 R for Data 
+Science at University of Leicester. It was designed and created in R Markdown, a 
+markup language that allows users to create documents that can be formatted to embed a variety of data such as code blocks, images and hyperlinks.
+When the R Markdown file is compiled, the markup language is hidden and the document is displayed in plain text.
+
+This content was created using [R](https://www.r-project.org/), [Rstudio](https://rstudio.com/), [RMarkdown](https://rmarkdown.rstudio.com/) and [GitHub](https://github.com/)
+
+## Materials 
+
+The libraries used in this assignment: 
 ```{r load_libraries, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(palmerpenguins)
@@ -19,6 +26,22 @@ library(knitr)
 library(readr)
 library(tinytex)
 ```
+
+For further information regarding the source code, data and libraries used in this assignment, please see the [projects GitHub page](https://github.com/Elliot-JG/GY7702_assignment). 
+
+## References
+Elliot would like to acknowledge that this document includes teaching materials from Dr Stefano De Sabbato for the module 
+[GY7702 R for Data Science](https://le.ac.uk/modules/2020/gy7702). Dr Stefanos teaching materials can be found [here](https://sdesabbata.github.io/granolarr/)  
+
+R for Data Science by Garrett Grolemund and Hadley Wickham, O’Reilly Media, 2016. [See online book](https://r4ds.had.co.nz/)  
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list = ls())
+```
+
+
 
 
 # Question 1
