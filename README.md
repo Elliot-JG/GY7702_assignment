@@ -26,7 +26,7 @@ The dependencies for the assignment are:
 * [tidyverse](https://www.tidyverse.org/)
 * [dplyr](https://dplyr.tidyverse.org/)
 * [knitr](https://yihui.org/knitr/)
-* [palmerpenguins](https://github.com/allisonhorst/palmerpenguins)
+* [palmerpenguins](https://allisonhorst.github.io/palmerpenguins/articles/intro.html)
 * [readr](https://readr.tidyverse.org/)
 
 ## :evergreen_tree: Data <a name="data"></a>
