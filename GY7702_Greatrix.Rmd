@@ -16,7 +16,7 @@ rm(list = ls())
 
 This document was created to meet the requirements of GY7702 R for Data 
 Science at University of Leicester. It was designed and created in R Markdown, a 
-markup language that allows users to create documents that can be formatted to embed a variety of data such as code blocks, images and hyperlinks.
+markup language that allows users to create documents that can be formatted to embed code blocks, code outputs and hyperlinks.
 When the R Markdown file is compiled, the markup language is hidden and the document is displayed in plain text.
 
 This content was created using [R](https://www.r-project.org/), [Rstudio](https://rstudio.com/), [RMarkdown](https://rmarkdown.rstudio.com/) and [GitHub](https://github.com/)
@@ -31,6 +31,7 @@ library(dplyr)
 library(knitr)
 library(readr)
 library(tinytex)
+library(lubridate)
 ```
 
 For further information regarding the source code, data and libraries used in this assignment, please see the [projects GitHub page](https://github.com/Elliot-JG/GY7702_assignment). 
@@ -78,10 +79,18 @@ num <- na.omit(num)
 
 # And finally check whether all students either completely agree (= 7).
 students_agree_complete <- all(num == 7)
+```
+```{r, echo=FALSE, message=FALSE}
+print(students_agree_complete)
+```
 
-# Or, completely disagree (=1).
+
+```{r}
+# Or completely disagree (=1).
 students_disagree_complete <- all(num == 1)
-
+```
+```{r, echo=FALSE, message=FALSE}
+print(students_disagree_complete)
 ```
 
 ## Question 1.2
@@ -125,8 +134,7 @@ pen %>%
   arrange(-body_mass_g)%>%
   
   # Return the 10 heaviest Gentoo penguins 
-  slice_head(n = 10)%>% 
-kable()
+  slice_head(n = 10)
 
 ```
 
@@ -188,12 +196,6 @@ minimum ```bill_depth_mm``` and divide them to get the unit-less measurement ```
   mutate(min_bl_bd = min(bill_length_mm) / min(bill_depth_mm))%>%
 ```
 
-
-
-
-
-
-
 Then repeat this for the  median and maximum values  
 
 ```{r, eval=FALSE}
@@ -201,12 +203,10 @@ Then repeat this for the  median and maximum values
   mutate(max_bl_bd = max(bill_length_mm) / max(bill_depth_mm))%>%
   
   # Drop bill_length_mm and bill_depth_mm 
-  subset(select = -c(bill_length_mm, bill_depth_mm))%>%
-  
-slice_head(n = 3)%>%   
-kable()
+  subset(select = -c(bill_length_mm, bill_depth_mm))
 ```
 
+This is a preview of 3 penguins from each island, demonstrating how the proportions are calculated *per island*. 
 ```{r, echo = FALSE}
 pen %>%
   select(species, island, bill_length_mm, bill_depth_mm,)%>%
@@ -215,8 +215,7 @@ pen %>%
   mutate(med_bl_bd = median(bill_length_mm) / median(bill_depth_mm))%>%
   mutate(max_bl_bd = max(bill_length_mm) / max(bill_depth_mm))%>%
   subset(select = -c(bill_length_mm, bill_depth_mm))%>%
-  
-slice_head(n = 3)%>%   
+  slice_head(n = 3)%>%
 kable()
 ```
 
@@ -226,7 +225,7 @@ kable()
 
 **Write the code necessary to load the data from** ***covid19_cases_20200301_20201017.csv*** **to a variable named covid_data**
   
-The library ```readr``` contains the function ```read_csv()``` which, unsurprisingly allows us to read .csv (comma-separated value) files into R. 
+The library ```readr``` contains the function ```read_csv()``` which allows us to read .csv (comma-separated value) files into R. 
 ```{r, eval=FALSE}
 # Reading the COVID-19 .csv from a local directory 
 covid_data <- read_csv("C:/.../data/covid19_cases_20200301_20201017.csv")
@@ -237,7 +236,62 @@ covid_data <- read_csv("C:/.../data/covid19_cases_20200301_20201017.csv")
 covid_data <- read_csv("C:/Users/44792/Desktop/R for data science/covid19_cases_20200301_20201017.csv")
 ```
 
+##  Question 3.2 
 
+Write the code necessary to 
+
+* Create a complete table, containing a row for each day and area
+* Replace NA values with the value available for the previous date
+* Replace the remaining NA values with zero 
+* Subset only the area assigned to me (Dudley) 
+* Drop the ```area_name``` column
+*  Store the resulting table in a variable named ```[Dudley]_complete_covid_data```
+
+First, lets check how the data is delivered. We want each row to contain a date and an area
+```{r}
+kable((covid_data[1:10,]), "simple")
+```
+
+This looks good, a date (```specimen_date```) and an area (```area_name```) is found on one row. 
+A further look at the data shows us that the table runs through all areas (with a case) for ```2020-03-01```. This is then repeated for ```2020-03-02```
+```{r, echo=FALSE, message=FALSE}
+kable((covid_data[108:113,]), "simple")
+```
+
+The question also asks for a check for NA values
+```{r}
+covid_data_na <- any(is.na(covid_data))
+```
+```{r, echo=FALSE, message=FALSE}
+print(covid_data_na)
+```
+
+So, the table contains no NA values. We can subset the ```area_name``` column to return only row that contain the string *Dudley*
+```{r}
+Dudley_complete_covid_data <- 
+  covid_data %>% 
+  filter(area_name == "Dudley")
+```
+```{r, echo=FALSE, message=FALSE}
+kable((Dudley_complete_covid_data[1:10,]), "simple")
+```
+
+
+# Question 3.3
+
+**Starting from the table [area]_complete_covid_data created for Question 3.2 :**
+
+* Create a copy of Dudley_complete_covid_data, i.e., as another variable named Dudley_day_before.
+* Use the library [lubridate](https://lubridate.tidyverse.org/) to create a new column named day_before in the new table
+[area]_day_before that reports the day before the day reported in the column specimen_date, as a
+character value (e.g., if specimen_date is "2020-10-10", day_before should be "2020-10-09")
+* Drop the specimen_date and cumCasesBySpecimenDate columns from the [area]_day_before table
+* Rename the newCasesBySpecimenDate column of the the [area]_day_before table to newCases_day_before
+* Join [area]_day_before with [area]_complete_covid_data, where the column specimen_date of
+[area]_complete_covid_data is equal to the column day_before of [area]_day_before
+* Calculate a new column in the joined table, containing the number of new cases as a percentage of the
+number of new cases of the day before
+* Store the resulting table in a variable named [area]_covid_development.
 
 ```{r, echo=FALSE}
 rm(list = ls())
