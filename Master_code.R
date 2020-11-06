@@ -137,6 +137,10 @@ merge(covid_data_long_cum,covid_data_long_new, by="area_name")
 
 ## Question 3 
 
+
+# Question 3 --------------------------------------------------------------
+
+
 ### Question 3.1
 
 covid_data_na <- any(is.na(covid_data))
@@ -157,9 +161,14 @@ Dudley_day_before$day_before <- Dudley_day_before$specimen_date
 # Subtract day from day before column
 Dudley_day_before$day_before <- as.Date(Dudley_day_before$day_before)-1
 
-
+# Drop the specimen_date and cumCases
+Dudley_day_before <- subset(Dudley_day_before, select =  -c(specimen_date, cumCasesBySpecimenDate))
   
+# Rename the newCasesBySpecimenDate column of the the [area]_day_before table to newCases_day_before.
+Dudley_day_before <- rename(Dudley_day_before, newCases_day_before = newCasesBySpecimenDate)
 
+# Join Dudley_day_before and Dudley_complete_covid_data by the column day_before in Dudley_day_before
+Dudley_day_before_join <- merge(Dudley_day_before, Dudley_complete_covid_data, by.Dudley_day_before = c("day_before"))
 
 # Question 4 --------------------------------------------------------------
 
