@@ -31,6 +31,7 @@ library(palmerpenguins)
 library(dplyr)
 library(knitr)
 library(readr)
+library(lubridate)
 
 # Remove NA values from the table 
  pen <- na.omit(penguins)
@@ -120,7 +121,7 @@ covid_data_long_new <- covid_data_wide %>%
   pivot_longer(cols = -specimen_date, names_to = c("newCasesBySpecimenDate","area_name"), names_sep = "_",)%>% 
   
   # Remove the 'newCasesBySpecimenDate' column full of 'newCasesBySpecimenDate' text 
-  subset(select = -c(newCasesBySpecimenDate))%>%
+  subset(select = -c(newCasesBySpecimenDate))
   covid_data_long_new[is.na(covid_data_long_new)] <- 0
 
 # Pivot cumulative cases to longer format 
@@ -138,15 +139,27 @@ merge(covid_data_long_cum,covid_data_long_new, by="area_name")
 
 ### Question 3.1
 
+covid_data_na <- any(is.na(covid_data))
 
 
+Dudley_complete_covid_data <- 
+  covid_data %>% 
+  filter(area_name == "Dudley")%>%
+  subset(select = -c(area_name))
 
-### Questions 3.2
+
+# Question 3.3
+Dudley_day_before <- Dudley_complete_covid_data
+
+#duplicate the specimen date column 
+Dudley_day_before$day_before <- Dudley_day_before$specimen_date
+
+# Subtract day from day before column
+Dudley_day_before$day_before <- as.Date(Dudley_day_before$day_before)-1
 
 
   
-# Subset only the area assigned to your student ID in the table in the appendix (Dudley)
-Dudley <- covid_data_wide[which(covid_data_wide$area_name=='Dudley')]
+
 
 # Question 4 --------------------------------------------------------------
 
