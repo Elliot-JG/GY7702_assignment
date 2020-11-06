@@ -294,6 +294,13 @@ character value (e.g., if specimen_date is "2020-10-10", day_before should be "2
 number of new cases of the day before
 * Store the resulting table in a variable named [area]_covid_development.
 
+
+
+
+```{r}
+
+```
+
 ```{r, echo=FALSE}
 rm(list = ls())
 ```
