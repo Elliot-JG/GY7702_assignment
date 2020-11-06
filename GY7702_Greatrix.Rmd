@@ -270,7 +270,8 @@ So, the table contains no NA values. We can subset the ```area_name``` column to
 ```{r}
 Dudley_complete_covid_data <- 
   covid_data %>% 
-  filter(area_name == "Dudley")
+  filter(area_name == "Dudley")%>%
+  subset(select = -c(area_name))
 ```
 ```{r, echo=FALSE, message=FALSE}
 kable((Dudley_complete_covid_data[1:10,]), "simple")
