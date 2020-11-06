@@ -143,6 +143,8 @@ merge(covid_data_long_cum,covid_data_long_new, by="area_name")
 
 ### Question 3.1
 
+# Run this to get Dudley COVID data 
+
 covid_data_na <- any(is.na(covid_data))
 
 
@@ -153,22 +155,57 @@ Dudley_complete_covid_data <-
 
 
 # Question 3.3
-Dudley_day_before <- Dudley_complete_covid_data
+Dudley_day_before_pipe_test <- Dudley_complete_covid_data
 
-#duplicate the specimen date column 
-Dudley_day_before$day_before <- Dudley_day_before$specimen_date
+# Duplicate the specimen date column 
+Dudley_day_before_pipe_test$day_before <- Dudley_day_before_pipe_test$specimen_date
 
 # Subtract day from day before column
-Dudley_day_before$day_before <- as.Date(Dudley_day_before$day_before)-1
+Dudley_day_before_pipe_test$day_before <- as.Date(Dudley_day_before_pipe_test$day_before)-1
 
 # Drop the specimen_date and cumCases
-Dudley_day_before <- subset(Dudley_day_before, select =  -c(specimen_date, cumCasesBySpecimenDate))
+Dudley_day_before_pipe_test <- subset(Dudley_day_before_pipe_test, select =  -c(specimen_date, cumCasesBySpecimenDate))
   
 # Rename the newCasesBySpecimenDate column of the the [area]_day_before table to newCases_day_before.
-Dudley_day_before <- rename(Dudley_day_before, newCases_day_before = newCasesBySpecimenDate)
+Dudley_day_before_pipe_test <- rename(Dudley_day_before_pipe_test, newCases_day_before = newCasesBySpecimenDate)
 
 # Join Dudley_day_before and Dudley_complete_covid_data by the column day_before in Dudley_day_before
-Dudley_day_before_join <- merge(Dudley_day_before, Dudley_complete_covid_data, by.Dudley_day_before = c("day_before"))
+Dudley_day_before_pipe_test <- left_join(Dudley_complete_covid_data, Dudley_day_before_pipe_test, by= c("specimen_date" = "day_before"))
+
+# Calculate a new column in the joined table, containing the number of new cases as a percentage of the number of new cases of the day before
+Dudley_day_before_pipe_test <- mutate(Dudley_day_before_pipe_test, percentage_of_new_cases = (newCases_day_before/newCasesBySpecimenDate)*100)
+
+# I think the way this is working is newCases_day_before actually states the cases on the specimen date. The amount of new cases by end of play 
+# on that specific day 
+
+# The newCases_by_specimen_date are lagging behind by one day, they state the cases at 00:00 on that day. 
+# This is the only way that this makes sense to me
+
+# By newCases_day_before / newCasesBySpecimenDate you see the increase as percentage from the beginning, to the end of the day 
+
+
+
+# Q3.3 PIPE TESTING -------------------------------------------------------
+
+# Putting together what will go in the Markdown 
+# Code from above is copied down below to form into pipe
+
+# DO NOT TOUCH CODE ABOVE
+# It works and gets you to the end result
+# Just need to manipulate it into Pipes now 
+
+Dudley_day_before_pipe_test <- Dudley_complete_covid_data
+Dudley_day_before_pipe_test$day_before <- Dudley_day_before_pipe_test$specimen_date
+Dudley_day_before_pipe_test$day_before <- as.Date(Dudley_day_before_pipe_test$day_before)-1
+
+
+Dudley_day_before_pipe_test %>%
+  subset(select = -c(specimen_date, cumCasesBySpecimenDate))%>%
+  rename(newCases_day_before = newCasesBySpecimenDate)%>%
+  left_join(Dudley_complete_covid_data, ., by= c("specimen_date" = "day_before"))%>%
+  mutate(percentage_of_new_cases = (newCases_day_before/newCasesBySpecimenDate)*100)%>%
+  kable()
+
 
 # Question 4 --------------------------------------------------------------
 
