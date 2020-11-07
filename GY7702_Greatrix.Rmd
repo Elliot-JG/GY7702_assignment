@@ -32,6 +32,7 @@ library(knitr)
 library(readr)
 library(tinytex)
 library(lubridate)
+library(ggplot2)
 ```
 
 For further information regarding the source code, data and libraries used in this assignment, please see the [projects GitHub page](https://github.com/Elliot-JG/GY7702_assignment). 
@@ -297,27 +298,29 @@ number of new cases of the day before
 
 ```{r}
 # Duplicate the table Dudley_complete_covid_date 
-Dudley_day_before_pipe_test <- Dudley_complete_covid_data
+Dudley_day_before <- Dudley_complete_covid_data
 
 # Creating a new column in Dudley_day_before, called 'day_before' that is a duplicate of 'specimen_date'
-Dudley_day_before_pipe_test$day_before <- Dudley_day_before_pipe_test$specimen_date
+Dudley_day_before$day_before <- Dudley_day_before$specimen_date
 
-# Using lubricate(), subtract 1 day from the 'day_before' column
-Dudley_day_before_pipe_test$day_before <- as.Date(Dudley_day_before_pipe_test$day_before)-1
+# Using lubricate(), subtract 1 day from the day_before column
+Dudley_day_before$day_before <- as.Date(Dudley_day_before$day_before)-1
 ```
 
 
 If the above section contained one more step, we would have given serious thought of how to put it into a ```pipe```. 
 The next section however is a lot more complex, and the ```pipe``` makes it more readable and more efficient. 
+We'll carry out the operation first and then explain the output below. 
 ```{r}
-Dudley_day_before_pipe_test %>%
+Dudley_day_before_out <- Dudley_day_before %>%
   # Remove specimen_date and cumcasesbyspecimenDate
   subset(select = -c(specimen_date, cumCasesBySpecimenDate))%>%
   
   # Rename newCasesBySpecimenDate to newCases_day_before 
   rename(newCases_day_before = newCasesBySpecimenDate)%>%
   
-  # Join [area]_day_before with Dudley_complete_covid_data, specimen_date is equal to the day_before 
+  # Join [area]_day_before with Dudley_complete_covid_data, specimen_date is 
+  # equal to the day_before 
   left_join(Dudley_complete_covid_data, ., by= c("specimen_date" = "day_before"))%>%
   
   # number of new cases as a percentage of the number of new cases of the day before
@@ -329,30 +332,38 @@ Dudley_day_before_pipe_test %>%
   # Remove any trailing 0's from percentage_of_new_cases
   mutate(percentage_of_new_cases = round(percentage_of_new_cases, 0)) %>%
 
-  # If there is any infite values in the table, set these to NA 
+  # If there is any infinite values in the table, set these to NA 
   mutate_if(is.numeric, list(~na_if(., Inf))) %>%
   
-  # Replace all NA values to 0 
-  mutate_if(is.numeric, replace_na, 0)%>%
-  
-  kable()
+  # and then replace all NA values with 0 
+  mutate_if(is.numeric, replace_na, 0)
+
+kable(Dudley_day_before_out[1:10,], "simple")
+
+
 ``` 
+By way of an explanation, ```newCases_day_before``` 
+states the cases on the following day. ```newCasesBySpecimenDate``` 
+states the cases on the ```specimen_date```. This allows 
+```newCases_day_before/newCasesBySpecimenDate``` 
+to efficiently calculate change in COVID cases over 2 days, across 1 row.
 
-Finally, ```percentage_of_new_cases``` returns ```Inf``` when ```newCases_day_before``` is 0. These can be cleaned with        
-```{r}
-Dudley_day_before_pipe_test[!is.finite(percentage_of_new_cases)] <- 0
-```
-
-  kable()
-```
-
-
-
-
+Using ```library(ggplot2)``` we can visualise the change in cases over 
+```specimen_date``` .The syntax here is quite self-explanatory, ```geom_line``` just specifies that
+it is a line plot, instead of a scatter (```geom_point```) for example. 
 
 ```{r}
-
+ggplot(data = Dudley_day_before_out, mapping = aes(x = specimen_date, 
+format = "%Y-%m-%d", y = percentage_of_new_cases)) + geom_path() + 
+  scale_x_date(date_breaks ="1 month", date_labels = "%m")
 ```
+
+
+
+
+The first cases for Dudley were reported on 07/03/2020. From this date, the percentage of new cases fluctuated, when compared to the previous day fluctuated 50-200%. There are outliers in this period on 17/03/2020 and 14/04/2020 where cases increased 300% and 360% respectively. This pattern continues throughout May, with a significant rise on 13/05/2020 to a 450% increase. The data in June and July presents a very different pattern. The percentage of new cases decreased below 100% more frequently, demonstrating that there were less cases on the following day. This continues until mid-way through August when the percentage of new cases increases again. The largest increase occured on 12/08/2020 when cases increased 500% the following day. This leads to a gradual rise in cases again throught September, to a level similar to that of April.  
+
+
 
 ```{r, echo=FALSE}
 rm(list = ls())
