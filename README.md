@@ -28,7 +28,8 @@ The dependencies for the assignment are:
 * [knitr](https://yihui.org/knitr/)
 * [palmerpenguins](https://allisonhorst.github.io/palmerpenguins/articles/intro.html)
 * [readr](https://readr.tidyverse.org/)
-* [ggplot2](https://ggplot2.tidyverse.org/)\
+* [ggplot2](https://ggplot2.tidyverse.org/)
+
 Note, some of these (dplyr and ggplot2 for example) are included within the tidyverse. However, in the spirit of transparency I thought I would list them all 
 
 ## :evergreen_tree: Data <a name="data"></a>
