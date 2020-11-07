@@ -221,6 +221,10 @@ Dudley_day_before_pipe_test %>%
   kable()
 
 
+# Plotting Dudley data
+ggplot(data = Dudley_day_before_out, mapping = aes(x = specimen_date, format = "%Y-%m-%d", y = percentage_of_new_cases)) +
+  geom_path() + scale_x_date(date_breaks = "1 month", date_labels = "%m")
+
 # Question 4 --------------------------------------------------------------
 
 # Read in population data  
