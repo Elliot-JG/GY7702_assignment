@@ -79,6 +79,8 @@ library(lubridate)
  
 # Question 3  -------------------------------------------------------------
 
+ ##   RUN THIS TO GET COVID DATA !!
+ 
 # Read in Covid-19 data 
 covid_data <- read_csv("C:/Users/44792/Desktop/R for data science/covid19_cases_20200301_20201017.csv")
 
@@ -204,6 +206,18 @@ Dudley_day_before_pipe_test %>%
   rename(newCases_day_before = newCasesBySpecimenDate)%>%
   left_join(Dudley_complete_covid_data, ., by= c("specimen_date" = "day_before"))%>%
   mutate(percentage_of_new_cases = (newCases_day_before/newCasesBySpecimenDate)*100)%>%
+  
+  # Set percentage_of_new_cases to 2 significant digits
+  mutate(percentage_of_new_cases = signif(percentage_of_new_cases, 2)) %>%
+  
+  # Remove any trailing 0's from percentage_of_new_cases
+  mutate(percentage_of_new_cases = round(percentage_of_new_cases, 0)) %>%
+  
+  # If there is any infite values in the table, set these to NA 
+  mutate_if(is.numeric, list(~na_if(., Inf))) %>%
+  
+  # Replace all NA values to 0 
+  mutate_if(is.numeric, replace_na, 0)%>%
   kable()
 
 
