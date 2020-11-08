@@ -333,10 +333,10 @@ Dudley_day_before_out <- Dudley_day_before %>%
   mutate(percentage_of_new_cases = round(percentage_of_new_cases, 0)) %>%
 
   # If there is any infinite values in the table, set these to NA 
-  mutate_if(is.numeric, list(~na_if(., Inf))) %>%
+  mutate_if(is.numeric, list(~na_if(., Inf))) 
   
   # and then replace all NA values with 0 
-  mutate_if(is.numeric, replace_na, 0)
+  # mutate_if(is.numeric, replace_na, 0)
 
 kable(Dudley_day_before_out[1:10,], "simple")
 
@@ -347,6 +347,7 @@ states the cases on the following day. ```newCasesBySpecimenDate```
 states the cases on the ```specimen_date```. This allows 
 ```newCases_day_before/newCasesBySpecimenDate``` 
 to efficiently calculate change in COVID cases over 2 days, across 1 row.
+
 
 Using ```library(ggplot2)``` we can visualise the change in cases over 
 ```specimen_date``` .The syntax here is quite self-explanatory, ```geom_line``` just specifies that
@@ -363,12 +364,83 @@ format = "%Y-%m-%d", y = percentage_of_new_cases)) + geom_path() +
 
 The first cases for Dudley were reported on 07/03/2020. From this date, the percentage of new cases fluctuated, when compared to the previous day fluctuated 50-200%. There are outliers in this period on 17/03/2020 and 14/04/2020 where cases increased 300% and 360% respectively. This pattern continues throughout May, with a significant rise on 13/05/2020 to a 450% increase. The data in June and July presents a very different pattern. The percentage of new cases decreased below 100% more frequently, demonstrating that there were less cases on the following day. This continues until mid-way through August when the percentage of new cases increases again. The largest increase occured on 12/08/2020 when cases increased 500% the following day. This leads to a gradual rise in cases again throught September, to a level similar to that of April.  
 
+Some issues arose when the next day (```newcases_day_before```) contained 0 cases. Dividing by 0 is ```inf``` or undefined, so these results were set to ```NA``` . These were not converted to 0 because ```inf != 0``` . This is the source of the gaps in the date seen throughout July, August and September. 
 
+# Question 4 
+
+**Analyse COVID and population data as you see fit**
+
+First, lets read in the population data
+
+```{r}
+# Read in population data  
+pop <- read_csv("C:/Users/44792/Desktop/R for data science/lad19_population.csv")
+```
+
+For a suitable comparison, we need join ```pop``` and ```covid_data```. They hold 2 common columns that state the name of the area. However in ```covid_data``` this column is called ```area_name``` and in ```pop``` it's called ```lad19_area_name```. Lets rename ```lad19_area_name``` to ```area_name``` for an easier join
+
+Note: Generally, renaming variables is bad practice. However, because this is a relatively small data set and this is a fairly *heuristic* study a ```rename``` serves it's purpose
+
+```{r}
+# Renaming lad19_area_name in pop to area_name 
+names(pop)[names(pop) == "lad19_area_name"] <- "area_name"
+
+# Joining covid_data and pop, using area_name
+cov_pop <- left_join(covid_data, pop)
+```
+
+This is looking good! Covid data for an area, alongside its associated population data. 
+Next, lets extract some areas from this dataset ```cov_pop``` and called it ```places```. 
+
+```{r}
+places <- c("Dudley","Plymouth")
+```
+
+Using a ```pipe``` , we can extract the data for the areas in ```places``` , normalize cumulative cases by the population of an area and drop any columns we don't need. 
+```{r}
+Dudley_Plymouth_covid_data <- 
+  cov_pop %>% 
+  
+  # Filtering rows out of cov_pop that match the values in places
+  filter(area_name %in% places) %>%
+  
+  # Remove area_name and newcasesbyspeciendate
+  subset(select = -c(lad19_area_code, newCasesBySpecimenDate))%>%
+
+  # Show cumulative cases as a percentage of the population of an area
+  mutate(CumCases_percentage_of_pop = (cumCasesBySpecimenDate / area_population)*100)%>%
+
+  # Remove the area_population 
+  subset(select = -c(area_population, cumCasesBySpecimenDate))
+```
+
+We can then show the cumulative cases for Dudley as a proportion of the population. 
+
+To show just Dudley, we need to ```pivot_wider``` to get ```Dudley``` in it's own column. 
+
+```ggplot``` then takes ```Dudley_Plymouth_wide``` as the data and the new column ```Dudley``` from the pivot to form the figure seen below. 
+```{r}
+Dudley_Plymouth_wide <- pivot_wider(Dudley_Plymouth_covid_data, names_from = area_name, values_from = c(CumCases_percentage_of_pop))
+
+ggplot(data = Dudley_Plymouth_wide, mapping = aes(x = specimen_date, format = "%Y-%m-%d")) + geom_line(aes(y = Dudley), colour = "darkred") + scale_x_date(date_breaks ="1 month", date_labels = "%m") +xlab("Month in 2020") +ylab("Cumulative cases per population (%)")
+```
+
+Interestingly, the original data set ```Dudley_Plymouth_covid_data``` was formatted perfectly for ```ggplot``` to visualise multiple areas on the same plot. 
+This works because ```ggplot``` takes all the data and colours it by the ```area_name```. ```ggplot``` is recognising 2 unique area names, and so they are coloured uniquely and displayed in an inbuilt legend. 
+
+```{r}
+Dudley_Plymouth_long <- pivot_longer(Dudley_Plymouth_wide, cols = -specimen_date, names_to = c("CumCases_percentage_of_pop"))
+
+ggplot(Dudley_Plymouth_covid_data, aes(x = specimen_date, format = "%Y-%m-%d", y = CumCases_percentage_of_pop, colour = area_name)) + geom_line() + scale_x_date(date_breaks ="1 month", date_labels = "%m") + xlab("Month in 2020") +ylab("Cumulative cases per population (%)")
+```
+The analysis above displays cumulative cases for Dudley and Plymouth as a percentage of the areas population. This is important as Dudley has a population of 333,334 while Plymouth has a population of 272,728. This was performed for a more honest assessment between the 2 areas. Dudley and Plymouth display cases in March. Dudley's first case is 07/03/10, compared to Plymouths later date of 10/03/2020. From this point, both areas display a very similar pattern in the rise of cases. That is, a sharp increase until the middle of May, followed by a flattened curve throughout June, July and August until cases increase again in September. A sharper rise, similar to March occur in October. Though the pattern for both areas are the same, the proportion of cases when compared to the populations are very different. After the initial rise in April, 0.3% of Dudleys population has had a case. This is compared to 0.15% for Plymouth. Additionally, when the curve is flattened in the Summer months, ~0.4% of Dudley has has a case, compared to Plymouths ~0.25%. The second 'spike' in October only serves to widen this gap. The last data from both areas was 10/10/2020 where there was a ~0.3% difference between cumulative cases in Plymouth and Dudley.  
 
 ```{r, echo=FALSE}
 rm(list = ls())
 ```
 
+```{r}
+```
 
 
 
