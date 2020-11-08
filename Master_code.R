@@ -152,7 +152,7 @@ covid_data_na <- any(is.na(covid_data))
 
 Dudley_complete_covid_data <- 
   covid_data %>% 
-  filter(area_name == "Dudley")%>%
+  filter(area_name == "Dudley", "Plymouth")%>%
   subset(select = -c(area_name))
 
 
@@ -227,6 +227,7 @@ ggplot(data = Dudley_day_before_out, mapping = aes(x = specimen_date, format = "
 
 # Question 4 --------------------------------------------------------------
 
+
 # Read in population data  
 pop <- read_csv("C:/Users/44792/Desktop/R for data science/lad19_population.csv")
 
@@ -236,4 +237,37 @@ names(pop)[names(pop) == "lad19_area_name"] <- "area_name"
 
 # Joining the Covid-19 and population data sets 
 cov_pop <- left_join(covid_data, pop)
- 
+
+# String of different places to pull out of Cov_pop
+places <- c("Dudley","Plymouth")
+
+# Filter out places from cov_pop
+Dudley_Plymouth_covid_data <- 
+  cov_pop %>% 
+  filter(area_name %in% places) %>%
+  
+  # Remove area_name and newcasesbyspeciendate
+  subset(select = -c(lad19_area_code, newCasesBySpecimenDate))%>%
+
+  # Form column showing cumulative cases as proportion of population 
+  mutate(CumCases_percentage_of_pop = (cumCasesBySpecimenDate / area_population)*100)%>%
+
+  # Remove the area_population 
+  subset(select = -c(area_population, cumCasesBySpecimenDate))
+
+  # Form a column for Plymouth CumCases_percentage_of_pop and Dudley CumCases_percentage_of_pop
+Dudley_Plymouth_wide <- pivot_wider(Dudley_Plymouth_covid_data, names_from = area_name, values_from = c(CumCases_percentage_of_pop))
+
+  # Plotting just Dudley
+ggplot(data = Dudley_Plymouth_wide, mapping = aes(x = specimen_date, format = "%Y-%m-%d")) + geom_line(aes(y = Dudley), colour = "darkred") + scale_x_date(date_breaks ="1 month", date_labels = "%m") +xlab("Month in 2020") +ylab("Cumulative cases per population (%)")
+
+  # Pivoting back to the original data 
+Dudley_Plymouth_long <- pivot_longer(Dudley_Plymouth_wide, cols = -specimen_date, names_to = c("CumCases_percentage_of_pop"))
+
+  # Plotting Plymouth and Dudley 
+ggplot(Dudley_Plymouth_covid_data, aes(x = specimen_date, format = "%Y-%m-%d", y = CumCases_percentage_of_pop, colour = area_name)) + geom_line() + scale_x_date(date_breaks ="1 month", date_labels = "%m")  
+  
+
+  
+  
+
