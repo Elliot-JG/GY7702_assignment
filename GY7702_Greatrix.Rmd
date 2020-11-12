@@ -253,24 +253,25 @@ First, lets check how the data is delivered. We want each row to contain a date 
 kable((covid_data[1:10,]), "simple")
 ```
 
-This looks good, a date (```specimen_date```) and an area (```area_name```) is found on one row. 
-A further look at the data shows us that the table runs through all areas (with a case) for ```2020-03-01```. This is then repeated for ```2020-03-02```
-```{r, echo=FALSE, message=FALSE}
-kable((covid_data[108:113,]), "simple")
-```
-
-The question also asks for a check for NA values
-```{r}
-covid_data_na <- any(is.na(covid_data))
-```
-```{r, echo=FALSE, message=FALSE}
-print(covid_data_na)
-```
-
-So, the table contains no NA values. We can subset the ```area_name``` column to return only rows that contain the string *Dudley*. After we've subsetted, we can then drop the area_name column entirely. 
+Next we want all areas to have a date, even if that area does not have any cases on that date. We can do this by using ```complete``` . 
+This will lead to NA values. Using ```fill``` , we can fill ```Na``` values with the next non ```NA``` value that is immediately above the ```NA``` value. This is called a ```down``` fill, and is the default of the ```fill()``` function.  
 ```{r}
 Dudley_complete_covid_data <- 
-  covid_data %>% 
+  covid_data %>%
+  
+  # Create a complete table
+  tidyr::complete(specimen_date, area_name)%>%
+  dplyr::group_by(area_name)%>%
+  dplyr::arrange(specimen_date)%>%
+  
+  # Fill newCases and cumCases with cases from the previous day 
+  tidyr::fill(newCasesBySpecimenDate, cumCasesBySpecimenDate)%>%
+  
+  # Set any other NA values to 0 
+  tidyr::replace_na(list(newCasesBySpecimenDate = 0))%>%
+  tidyr::replace_na(list(cumCasesBySpecimenDate = 0))%>%
+
+  # Filter out the area 'Dudley'
   filter(area_name == "Dudley")%>%
   subset(select = -c(area_name))
 ```
@@ -372,7 +373,7 @@ Some issues arose when the next day (```newcases_day_before```) contained 0 case
 
 First, lets read in the population data
 
-```{r}
+```{r, echo=FALSE, message=FALSE}
 # Read in population data  
 pop <- read_csv("C:/Users/44792/Desktop/R for data science/lad19_population.csv")
 ```
@@ -381,7 +382,7 @@ For a suitable comparison, we need join ```pop``` and ```covid_data```. They hol
 
 Note: Generally, renaming variables is bad practice. However, because this is a relatively small data set and this is a fairly *heuristic* study a ```rename``` serves it's purpose
 
-```{r}
+```{r,  echo=FALSE, message=FALSE}
 # Renaming lad19_area_name in pop to area_name 
 names(pop)[names(pop) == "lad19_area_name"] <- "area_name"
 
@@ -406,10 +407,10 @@ Dudley_Plymouth_covid_data <-
   
   # Remove area_name and newcasesbyspeciendate
   subset(select = -c(lad19_area_code, newCasesBySpecimenDate))%>%
-
+  
   # Show cumulative cases as a percentage of the population of an area
   mutate(CumCases_percentage_of_pop = (cumCasesBySpecimenDate / area_population)*100)%>%
-
+  
   # Remove the area_population 
   subset(select = -c(area_population, cumCasesBySpecimenDate))
 ```
