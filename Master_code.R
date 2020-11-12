@@ -83,6 +83,14 @@ library(lubridate)
  
 # Read in Covid-19 data 
 covid_data <- read_csv("C:/Users/44792/Desktop/R for data science/covid19_cases_20200301_20201017.csv")
+covid_na <- covid_data %>%
+  tidyr::complete(specimen_date, area_name)%>%
+  dplyr::group_by(area_name)%>%
+  dplyr::arrange(specimen_date)%>%
+  tidyr::fill(newCasesBySpecimenDate, cumCasesBySpecimenDate)%>%
+  tidyr::replace_na(list(newCasesBySpecimenDate = 0))%>%
+  tidyr::replace_na(list(cumCasesBySpecimenDate = 0))
+    
 
 # Check for NA values in covid_data
 any(is.na(covid_data))
