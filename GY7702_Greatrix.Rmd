@@ -296,50 +296,45 @@ character value (e.g., if specimen_date is "2020-10-10", day_before should be "2
 number of new cases of the day before
 * Store the resulting table in a variable named [area]_covid_development.
 
-
 ```{r}
-# Duplicate the table Dudley_complete_covid_date 
+# Create a copy of `[area]_complete_covid_data`, i.e., as another variable named `[area]_day_before`.
 Dudley_day_before <- Dudley_complete_covid_data
 
-# Creating a new column in Dudley_day_before, called 'day_before' that is a duplicate of 'specimen_date'
-Dudley_day_before$day_before <- Dudley_day_before$specimen_date
+# create a new column named `day_to_match`
+Dudley_day_before$day_to_match <- Dudley_day_before$specimen_date
 
-# Using lubricate(), subtract 1 day from the day_before column
-Dudley_day_before$day_before <- as.Date(Dudley_day_before$day_before)-1
+# that reports the day after the day reported in the column `specimen_date`,
+Dudley_day_before$day_to_match <- as.Date(Dudley_day_before$day_to_match)+1
 ```
-
 
 If the above section contained one more step, we would have given serious thought of how to put it into a ```pipe```. 
 The next section however is a lot more complex, and the ```pipe``` makes it more readable and more efficient. 
 We'll carry out the operation first and then explain the output below. 
 ```{r}
-Dudley_day_before_out <- Dudley_day_before %>%
-  # Remove specimen_date and cumcasesbyspecimenDate
-  subset(select = -c(specimen_date, cumCasesBySpecimenDate))%>%
+Dudley_covid_development_pipe_test <- Dudley_day_before %>%
   
-  # Rename newCasesBySpecimenDate to newCases_day_before 
-  rename(newCases_day_before = newCasesBySpecimenDate)%>%
-  
-  # Join [area]_day_before with Dudley_complete_covid_data, specimen_date is 
-  # equal to the day_before 
-  left_join(Dudley_complete_covid_data, ., by= c("specimen_date" = "day_before"))%>%
-  
-  # number of new cases as a percentage of the number of new cases of the day before
-  mutate(percentage_of_new_cases = (newCases_day_before/newCasesBySpecimenDate)*100) %>%
-  
-  # Set percentage_of_new_cases to 2 significant digits
-  mutate(percentage_of_new_cases = signif(percentage_of_new_cases, 2)) %>%
-  
-  # Remove any trailing 0's from percentage_of_new_cases
-  mutate(percentage_of_new_cases = round(percentage_of_new_cases, 0)) %>%
+# Drop the `specimen_date` and `cumCasesBySpecimenDate` columns from the `[area]_day_before` table
+subset(select = -c(specimen_date, cumCasesBySpecimenDate)) %>%
 
-  # If there is any infinite values in the table, set these to NA 
-  mutate_if(is.numeric, list(~na_if(., Inf))) 
+# Rename the `newCasesBySpecimenDate` column of the the `[area]_day_before` table to `newCases_day_before`
+rename(newCases_day_before = newCasesBySpecimenDate) %>%
+
+# Join `[area]_day_before` with `[area]_complete_covid_data`, where the column `specimen_date` of `[area]_complete_covid_data` is equal to the column `day_to_match` of `[area]_day_before
+left_join(Dudley_complete_covid_data,., by= c("specimen_date" = "day_to_match")) %>%
+
+# number of new cases as a percentage of the number of new cases of the day before
+mutate(percentage_of_new_cases = (newCasesBySpecimenDate/newCases_day_before)*100)%>%
+
+# Remove any trailing 0's from percentage_of_new_cases
+mutate(percentage_of_new_cases = round(percentage_of_new_cases, 0)) %>%
+  
+# If there is any infinite values in the table, set these to NA 
+mutate_if(is.numeric, list(~na_if(., Inf))) 
   
   # and then replace all NA values with 0 
   # mutate_if(is.numeric, replace_na, 0)
 
-kable(Dudley_day_before_out[1:10,], "simple")
+kable(Dudley_covid_development_pipe_test[1:10,], "simple")
 
 
 ``` 
@@ -355,7 +350,7 @@ Using ```library(ggplot2)``` we can visualise the change in cases over
 it is a line plot, instead of a scatter (```geom_point```) for example. 
 
 ```{r}
-ggplot(data = Dudley_day_before_out, mapping = aes(x = specimen_date, 
+ggplot(data = Dudley_covid_development_pipe_test, mapping = aes(x = specimen_date, 
 format = "%Y-%m-%d", y = percentage_of_new_cases)) + geom_path() + 
   scale_x_date(date_breaks ="1 month", date_labels = "%m")
 ```
@@ -363,7 +358,7 @@ format = "%Y-%m-%d", y = percentage_of_new_cases)) + geom_path() +
 
 
 
-The first cases for Dudley were reported on 07/03/2020. From this date, the percentage of new cases fluctuated, when compared to the previous day fluctuated 50-200%. There are outliers in this period on 17/03/2020 and 14/04/2020 where cases increased 300% and 360% respectively. This pattern continues throughout May, with a significant rise on 13/05/2020 to a 450% increase. The data in June and July presents a very different pattern. The percentage of new cases decreased below 100% more frequently, demonstrating that there were less cases on the following day. This continues until mid-way through August when the percentage of new cases increases again. The largest increase occured on 12/08/2020 when cases increased 500% the following day. This leads to a gradual rise in cases again throught September, to a level similar to that of April.  
+The first cases for Dudley were reported on 07/03/2020. From this date, the percentage of new cases fluctuated, when compared to the previous day fluctuated 50-200%. There are outliers in this period on 17/03/2020 and 14/04/2020 where cases increased 300% and 360% respectively. This pattern continues throughout May, with a significant rise on 13/05/2020 to a 450% increase. The data in June and July presents a very different pattern. The percentage of new cases decreased below 100% more frequently, demonstrating that there were less cases on the following day. This continues until mid-way through August when the percentage of new cases increases again. The largest increase occured on 12/08/2020 when cases increased 500% the following day. This leads to a gradual rise in cases again throughout September, to a level similar to that of April.  
 
 Some issues arose when the next day (```newcases_day_before```) contained 0 cases. Dividing by 0 is ```inf``` or undefined, so these results were set to ```NA``` . These were not converted to 0 because ```inf != 0``` . This is the source of the gaps in the date seen throughout July, August and September. 
 
@@ -417,7 +412,8 @@ Dudley_Plymouth_covid_data <-
 
 We can then show the cumulative cases for Dudley as a proportion of the population. 
 
-To show just Dudley, we need to ```pivot_wider``` to get ```Dudley``` in it's own column. 
+To show just Dudley, we need to ```pivot_wider``` to get ```Dudley``` in it's own column.
+Always good to have some practise with ```pivot``` as it can seema  bit unintuitive
 
 ```ggplot``` then takes ```Dudley_Plymouth_wide``` as the data and the new column ```Dudley``` from the pivot to form the figure seen below. 
 ```{r}
@@ -427,7 +423,7 @@ ggplot(data = Dudley_Plymouth_wide, mapping = aes(x = specimen_date, format = "%
 ```
 
 Interestingly, the original data set ```Dudley_Plymouth_covid_data``` was formatted perfectly for ```ggplot``` to visualise multiple areas on the same plot. 
-This works because ```ggplot``` takes all the data and colours it by the ```area_name```. ```ggplot``` is recognising 2 unique area names, and so they are coloured uniquely and displayed in an inbuilt legend. 
+This works because ```ggplot``` takes all the data and colours it by the ```area_name``` . ```ggplot``` is recognising 2 unique area names, and so they are coloured by 2 unique colours and displayed in an inbuilt legend. 
 
 ```{r}
 Dudley_Plymouth_long <- pivot_longer(Dudley_Plymouth_wide, cols = -specimen_date, names_to = c("CumCases_percentage_of_pop"))
