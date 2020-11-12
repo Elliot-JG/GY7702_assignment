@@ -83,71 +83,48 @@ library(lubridate)
  
 # Read in Covid-19 data 
 covid_data <- read_csv("C:/Users/44792/Desktop/R for data science/covid19_cases_20200301_20201017.csv")
-covid_na <- covid_data %>%
+Dudley_complete_covid_data <- covid_data %>%
   tidyr::complete(specimen_date, area_name)%>%
   dplyr::group_by(area_name)%>%
   dplyr::arrange(specimen_date)%>%
   tidyr::fill(newCasesBySpecimenDate, cumCasesBySpecimenDate)%>%
   tidyr::replace_na(list(newCasesBySpecimenDate = 0))%>%
-  tidyr::replace_na(list(cumCasesBySpecimenDate = 0))
-    
+  tidyr::replace_na(list(cumCasesBySpecimenDate = 0))%>%
+  filter(area_name == "Dudley")%>%
+  subset(select = -c(area_name))
 
-# Check for NA values in covid_data
-any(is.na(covid_data))
-## [1] FALSE
 
-## This returns false, meaning that there is not a date in the table that needs data filling in from the previous day
-## To be clear, every row contains either 0 or >0
+# Create a copy of `[area]_complete_covid_data`, i.e., as another variable named `[area]_day_before`.
+Dudley_day_before <- Dudley_complete_covid_data
 
-# Start pipe, with a variable named 'covid_data_wide' 
-covid_data_wide <- covid_data%>%
 
-# Reshape the table, from long -> wide
-# Each day is a row, with new column names from (names_from) area_name.
-# Values for these new columns are taken from (values_from) 'newCasesBySpecimenDate' and 'cumCasesBySpecimenDate'
-pivot_wider(names_from = area_name, values_from = c(newCasesBySpecimenDate, cumCasesBySpecimenDate))
+# create a new column named `day_to_match`
+Dudley_day_before$day_to_match <- Dudley_day_before$specimen_date
 
-## Some locations did not have cases in the earlier months (March, April for example) and so were not included in the table in this time period. 
-## This means, when every location is considered at every date, NA's arise. In other words, location 'x' may not had been included in the table on 2020-03-01
-## and was only added into covid_data on 2020-04-01 (for example), leading to NA's for the entirety of March.
+# that reports the day after the day reported in the column `specimen_date`,
+Dudley_day_before$day_to_match <- as.Date(Dudley_day_before$day_to_match)+1
 
-# This can be double checked with....
-any(is.na(covid_data_wide))
-## [1] TRUE 
 
-# Remove NA values 
-covid_data_wide[is.na(covid_data_wide)] <- 0
-
-# Check for NA values again 
-any(is.na(covid_data_wide))
-## [1] FALSE
-## This returns false as NA values have been replaced with 0 
-
-# Reshape again to get area_names back
-## This does not work (merge causes R to run out of memory)
-
-# Pivot new cases to longerformat 
-covid_data_long_new <- covid_data_wide %>%
-  pivot_longer(cols = -specimen_date, names_to = c("newCasesBySpecimenDate","area_name"), names_sep = "_",)%>% 
+Dudley_covid_development_pipe_test <- Dudley_day_before %>%
   
-  # Remove the 'newCasesBySpecimenDate' column full of 'newCasesBySpecimenDate' text 
-  subset(select = -c(newCasesBySpecimenDate))
-  covid_data_long_new[is.na(covid_data_long_new)] <- 0
+# Drop the `specimen_date` and `cumCasesBySpecimenDate` columns from the `[area]_day_before` table
+subset(select = -c(specimen_date, cumCasesBySpecimenDate)) %>%
 
-# Pivot cumulative cases to longer format 
-covid_data_long_cum <- covid_data_wide %>%
-  pivot_longer(cols = -specimen_date, names_to = c("cumCasesBySpecimenDate","area_name"), names_sep = "_",)
+# Rename the `newCasesBySpecimenDate` column of the the `[area]_day_before` table to `newCases_day_before`
+rename(newCases_day_before = newCasesBySpecimenDate) %>%
+
+# Join `[area]_day_before` with `[area]_complete_covid_data`, where the column `specimen_date` of `[area]_complete_covid_data` is equal to the column `day_to_match` of `[area]_day_before
+left_join(Dudley_complete_covid_data,., by= c("specimen_date" = "day_to_match")) %>%
+
+# number of new cases as a percentage of the number of new cases of the day before
+mutate(percentage_of_new_cases = (newCasesBySpecimenDate/newCases_day_before)*100)
+
+# Remove any trailing 0's from percentage_of_new_cases
+mutate(percentage_of_new_cases = round(percentage_of_new_cases, 0)) %>%
   
-# Remove the 'cumCasesBySpecimenDate' column full of 'cumCasesBySpecimenDate' text
-  subset(select = -c(cumCasesBySpecimenDate))%>% 
-  covid_data_long_cum[is.na(covid_data_long_cum)] <- 0 
-
-# Merge the 2 dataframes to 
-merge(covid_data_long_cum,covid_data_long_new, by="area_name")
-
-## Question 3 
-
-
+# If there is any infinite values in the table, set these to NA 
+mutate_if(is.numeric, list(~na_if(., Inf))) 
+  
 # Question 3 --------------------------------------------------------------
 
 
