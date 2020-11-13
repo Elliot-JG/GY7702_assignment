@@ -36,9 +36,9 @@ Note, some of these (dplyr and ggplot2 for example) are included within the tidy
 
 ## :evergreen_tree: Data <a name="data"></a>
 The data used in this assignment is in [GY7702_data](https://github.com/Elliot-JG/GY7702_assignment/tree/main/GY7702_data). There are two .csv files:
-* **covid19_cases_20200301_20201017.csv**\
+* **covid19_cases_20200301_20201017.csv**
   + UK Covid-19 daily and cumulative cases 01/03/2020 - 17/10/2020 
-* **lad19_population.csv**\
+* **lad19_population.csv**
   + UK population per local authority 
 
 ## :lemon: Usage <a name="usage"></a>
