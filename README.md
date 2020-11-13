@@ -30,6 +30,7 @@ The dependencies for the assignment are:
 * [readr](https://readr.tidyverse.org/)
 * [ggplot2](https://ggplot2.tidyverse.org/)
 * [gridExtra](https://cran.r-project.org/web/packages/gridExtra/gridExtra.pdf)
+* [kableExtra](https://haozhu233.github.io/kableExtra/)
 
 Note, some of these (dplyr and ggplot2 for example) are included within the tidyverse. However, in the spirit of transparency I thought I would list them all 
 
