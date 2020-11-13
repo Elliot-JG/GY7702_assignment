@@ -158,9 +158,6 @@ kable(gentoo_heaviest[1:10,], format = "latex", booktabs = T) %>%
 kable_styling(latex_options = c("striped", "scale_down"))
 ```
 
-
-
-
 ## Question 2.3
 
 **Write the code necessary to create a table showing the 
@@ -440,11 +437,7 @@ kable_styling(latex_options = c("striped", "scale_down"))
 
 ``` 
 
-By way of an explanation, ```newCases_day_before``` 
-states the cases the day before ```specimen_date. ```newCasesBySpecimenDate``` 
-states the cases on the ```specimen_date```. This allows 
-```newCases_day_before/newCasesBySpecimenDate``` 
-to efficiently calculate change in COVID cases over 2 days, across 1 row.
+By way of an explanation, ```newCases_day_before``` states the cases the day before ```specimen_date ``` . ```newCasesBySpecimenDate``` states the cases on the ```specimen_date```. This allows ```newCases_day_before/newCasesBySpecimenDate``` to efficiently calculate change in COVID cases over 2 days, across 1 row.
 
 
 Using ```library(ggplot2)``` and ```library(gridExtra)``` we can visualise the change in cases over 
@@ -469,7 +462,7 @@ percentage_change <- ggplot2::ggplot(
   # Specify the connection of observations along the x axis 
   geom_path() + 
     
-  # Scale the x axis by 1 month 
+  # Scale the x axis monnthly
     scale_x_date(
     date_breaks ="1 month",
     
@@ -494,31 +487,31 @@ cumulative <- ggplot2::ggplot(
     date_labels = "%b") +
   labs(
     x = "Month in 2020", 
-    y = "Percentage of new cases (%)")
+    y = "Cumulative cases")
 
 
 
 ```
 
 To display the 2 plots above each other we can use ```gridExtra()```
-```{r}
+```{r, message=FALSE}
 gridExtra::grid.arrange(
   percentage_change,cumulative
   )
 ```
 
-The first cases for Dudley were reported on 07/03/2020. From this date, the percentage of new cases fluctuated, when compared to the previous day fluctuated 50-200%. There are outliers in this period on 17/03/2020 and 14/04/2020 where cases increased 300% and 360% respectively. This pattern continues throughout May, with a significant rise on 13/05/2020 to a 450% increase. The data in June and July presents a very different pattern. The percentage of new cases decreased below 100% more frequently, demonstrating that there were less cases on the following day. This continues until mid-way through August when the percentage of new cases increases again. The largest increase occured on 12/08/2020 when cases increased 500% the following day. This leads to a gradual rise in cases again throughout September, to a level similar to that of April.  
+The first cases for Dudley were reported on 07/03/2020. The percentage of new cases fluctuated 50-200%, when compared to the previous day. There are outliers in this period on 18/03/2020 and 15/04/2020 where cases increased 300% and 360% respectively. The consistent >100% daily rise in cases is highlighted in the cumulative cases which show a steady rise during the same period. This pattern continues throughout May, with a significant rise on 14/05/2020 to a 450% increase. The data in June and July presents a very different pattern. The percentage of new cases decreased below 100% more frequently, demonstrating that there were less cases on the following day. This caused a 'flattening' of the cumulative cases over the same time period. This continues until mid-way through August when the percentage of new cases increases again. The largest increase occurred on 13/08/2020 when cases increased 500%. This leads to a gradual rise in cumulative cases again throughout September, to a level similar to that of April.  
 
 Some issues arose when the next day (```newcases_day_before```) contained 0 cases. Dividing by 0 is ```inf``` or undefined, so these results were set to ```NA``` . These were not converted to 0 because ```inf != 0``` . This is the source of the gaps in the date seen throughout July, August and September. 
 
 # Question 4 
 
-**Analyse COVID and population data as you see fit**
+**Analyse the COVID and population data as you see fit**
 
 First, lets read in the population data
 
 ```{r, eval=FALSE}
-# Read in population data  
+# Read in the population data from a local directory
 pop <- readr::read_csv("C:/.../data/lad19_population.csv")
 
 ```
@@ -650,7 +643,9 @@ ggplot2::ggplot(
   labs(colour="Area")
 ```
 ```
-The analysis above displays cumulative cases for Dudley and Plymouth as a percentage of the areas population. This is important as Dudley has a population of 333,334 while Plymouth has a population of 272,728. This was performed for a more honest assessment between the 2 areas. Dudley and Plymouth display cases in March. Dudley's first case is 07/03/10, compared to Plymouths later date of 10/03/2020. From this point, both areas display a very similar pattern in the rise of cases. That is, a sharp increase until the middle of May, followed by a flattened curve throughout June, July and August until cases increase again in September. A sharper rise, similar to March occur in October. Though the pattern for both areas are the same, the proportion of cases when compared to the populations are very different. After the initial rise in April, 0.3% of Dudleys population has had a case. This is compared to 0.15% for Plymouth. Additionally, when the curve is flattened in the Summer months, ~0.4% of Dudley has has a case, compared to Plymouths ~0.25%. The second 'spike' in October only serves to widen this gap. The last data from both areas was 10/10/2020 where there was a ~0.3% difference between cumulative cases in Plymouth and Dudley.  
+The analysis above displays cumulative cases for Dudley and Plymouth as a percentage of the areas population. This is important as Dudley has a population of 333,334 while Plymouth has a population of 272,728. This was performed for a more honest assessment between the 2 areas. Dudley and Plymouth display cases in March. Dudley's first case is 07/03/10, compared to Plymouths later date of 10/03/2020. From this point, both areas display a very similar pattern in the rise of cases. That is, a sharp increase until the middle of May, followed by a flattened curve throughout June, July and August until cases increase again in September. A sharper rise, similar to March occur in October. 
+
+Though the pattern for both areas are the same, the proportion of cases when compared to the populations are very different. After the initial rise in April, 0.3% of Dudleys population has had a case. This is compared to 0.15% for Plymouth. Additionally, when the curve is flattened in the Summer months, ~0.4% of Dudley has has a case, compared to Plymouths ~0.25%. The second 'spike' in October only serves to widen this gap. The last data from both areas was 10/10/2020 where there was a ~0.3% difference between cumulative cases in Plymouth and Dudley.  
 
 ```{r, echo=FALSE}
 rm(list = ls())
