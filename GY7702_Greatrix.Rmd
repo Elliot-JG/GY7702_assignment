@@ -74,7 +74,8 @@ completely disagree or completely agree, once the missing values are excluded
  
 ```{r}
 # First, let's create the vector.
-num <- c(NA, 3, 4, 4, 5, 2, 4, NA, 6, 3, 5, 4, 0, 5, 7, 5, NA, 5, 2, 4, NA, 3, 3, 5, NA)
+num <- c(NA, 3, 4, 4, 5, 2, 4, NA, 6, 3, 5, 4, 0
+         , 5, 7, 5, NA, 5, 2, 4, NA, 3, 3, 5, NA)
 
 # Then, remove missing values.
 num <- na.omit(num)
@@ -127,13 +128,19 @@ It is important to note that the functions in the pipe operator do not require t
 ```{r}
 pen %>%
   # First, let's select all the variables that the question asks for
-  dplyr::select(species, island, bill_length_mm, bill_depth_mm, body_mass_g)%>%
+  dplyr::select(
+    species, island, bill_length_mm, bill_depth_mm, body_mass_g
+    )%>%
   
   # and select all the 'Gentoo' penguins.
-  dplyr::filter(species == "Gentoo")%>%
+  dplyr::filter(
+    species == "Gentoo"
+    )%>%
   
   # Order body mass in ascending order
-  dplyr::arrange(-body_mass_g)%>%
+  dplyr::arrange(
+    -body_mass_g
+    )%>%
   
   # Return the 10 heaviest Gentoo penguins 
   slice_head(n = 10)
@@ -156,16 +163,24 @@ The result will be appended to ```pen``` in a column called ```avg_bill_length``
 pen %>%
   
   # Select the appropriate attributes
-  dplyr::select(species, island, bill_length_mm, bill_depth_mm,)%>%
+  dplyr::select(
+    species, island, bill_length_mm, bill_depth_mm
+    )%>%
   
   # Order by bill_length_mm. By default arrange sorts in ascending order.
-  dplyr::arrange(bill_length_mm)%>%
+  dplyr::arrange(
+    bill_length_mm
+    )%>%
   
   # Use group_by to execute the average for each island
-  dplyr::group_by(island)%>%
+  dplyr::group_by(
+    island
+    )%>%
   
   # Append the average bill_length_mm to the table pen
-  dplyr::mutate(avg_bill_length_mm = mean(bill_length_mm))%>%
+  dplyr::mutate(
+    avg_bill_length_mm = mean(bill_length_mm)
+    )%>%
   
   # Display 3 example average_bill_lengths for each island 
   slice_head(n = 3)%>%
@@ -189,23 +204,36 @@ minimum ```bill_depth_mm``` and divide them to get the unit-less measurement ```
 ```{r, eval=FALSE}
   pen %>%
   # Select the necessary attributes 
-  dplyr::select(species, island, bill_length_mm, bill_depth_mm,)%>%
+  dplyr::select(
+    species, island, bill_length_mm, bill_depth_mm
+    )%>%
   
   # Execute the proportions for each species
-  dplyr::group_by(species)%>%
+  dplyr::group_by(
+    species
+    )%>%
   
   # Append the proportions to the table pen, using mutate
-  dplyr::mutate(min_bl_bd = min(bill_length_mm) / min(bill_depth_mm))%>%
+  dplyr::mutate(
+    min_bl_bd = min(bill_length_mm) / min(bill_depth_mm)
+    )%>%
 ```
 
 Then repeat this for the  median and maximum values  
 
 ```{r, eval=FALSE}
-  dplyr::mutate(med_bl_bd = median(bill_length_mm) / median(bill_depth_mm))%>%
-  dplyr::mutate(max_bl_bd = max(bill_length_mm) / max(bill_depth_mm))%>%
+  dplyr::mutate(
+    med_bl_bd = median(bill_length_mm) / median(bill_depth_mm)
+    )%>%
+  
+  dplyr::mutate(
+    max_bl_bd = max(bill_length_mm) / max(bill_depth_mm)
+    )%>%
   
   # Drop bill_length_mm and bill_depth_mm 
-  dplyr::subset(select = -c(bill_length_mm, bill_depth_mm))
+  dplyr::subset(
+    select = -c(bill_length_mm, bill_depth_mm)
+    )
 ```
 
 This is a preview of 3 penguins from each island, demonstrating how the proportions are calculated *per island*. 
@@ -231,7 +259,9 @@ The library ```readr``` contains the function ```read_csv()``` which allows us t
 ```{r, eval=FALSE}
 # Reading the COVID-19 .csv from a local directory 
 covid_data <- 
-  readr::read_csv("C:/.../data/covid19_cases_20200301_20201017.csv")
+  readr::read_csv(
+    "C:/.../data/covid19_cases_20200301_20201017.csv"
+    )
 
 ```
 
@@ -253,7 +283,9 @@ Write the code necessary to
 
 First, lets check how the data is delivered. We want each row to contain a date and an area
 ```{r}
-knitr::kable((covid_data[1:10,]), "simple")
+knitr::kable(
+  (covid_data[1:10,]), "simple"
+  )
 ```
 
 Next we want all areas to have a date, even if that area does not have any cases on that date. We can do this by using ```complete``` . 
@@ -263,23 +295,44 @@ Dudley_complete_covid_data <-
   covid_data %>%
   
   # Create a complete table
-  tidyr::complete(specimen_date, area_name)%>%
-  dplyr::group_by(area_name)%>%
-  dplyr::arrange(specimen_date)%>%
+  tidyr::complete(
+    specimen_date, area_name
+    )%>%
+  dplyr::group_by(
+    area_name
+    )%>%
+  dplyr::arrange(
+    specimen_date
+    )%>%
   
   # Fill newCases and cumCases with cases from the previous day 
-  tidyr::fill(newCasesBySpecimenDate, cumCasesBySpecimenDate)%>%
+  tidyr::fill(
+    newCasesBySpecimenDate, cumCasesBySpecimenDate
+    )%>%
   
   # Set any other NA values to 0 
-  tidyr::replace_na(list(newCasesBySpecimenDate = 0))%>%
-  tidyr::replace_na(list(cumCasesBySpecimenDate = 0))%>%
+  tidyr::replace_na(
+    list(newCasesBySpecimenDate = 0)
+    )%>%
+  
+  tidyr::replace_na(
+    list(cumCasesBySpecimenDate = 0)
+    )%>%
 
   # Filter out the area 'Dudley'
-  filter(area_name == "Dudley")%>%
-  subset(select = -c(area_name))
+  filter(
+    area_name == "Dudley"
+    )%>%
+  
+  # Drop the area_name column 
+  subset(
+    select = -c(area_name)
+    )
 ```
 ```{r, echo=FALSE, message=FALSE}
-kable((Dudley_complete_covid_data[1:10,]), "simple")
+kable(
+  (Dudley_complete_covid_data[1:10,]), 
+  "simple")
 ```
 
 
@@ -304,38 +357,59 @@ number of new cases of the day before
 Dudley_day_before <- Dudley_complete_covid_data
 
 # create a new column named `day_to_match`
-Dudley_day_before$day_to_match <- Dudley_day_before$specimen_date
+Dudley_day_before$day_to_match <- 
+  Dudley_day_before$specimen_date
 
 # that reports the day after the day reported in the column `specimen_date`,
-Dudley_day_before$day_to_match <- as.Date(Dudley_day_before$day_to_match)+1
+Dudley_day_before$day_to_match <- 
+  as.Date(
+    Dudley_day_before$day_to_match
+    )+1
 ```
 
 If the above section contained one more step, we would have given serious thought of how to put it into a ```pipe```. 
 The next section however is a lot more complex, and the ```pipe``` makes it more readable and more efficient. 
 We'll carry out the operation first and then explain the output below. 
 ```{r}
-Dudley_covid_development_pipe_test <- Dudley_day_before %>%
+Dudley_covid_development_pipe_test <- 
+  Dudley_day_before %>%
   
 # Drop the `specimen_date` and `cumCasesBySpecimenDate` columns from the `[area]_day_before` table
-subset(select = -c(specimen_date, cumCasesBySpecimenDate)) %>%
+subset(
+  select = -c(specimen_date, cumCasesBySpecimenDate)
+  ) %>%
 
 # Rename the `newCasesBySpecimenDate` column of the the `[area]_day_before` table to `newCases_day_before`
-dplyr::rename(newCases_day_before = newCasesBySpecimenDate) %>%
+dplyr::rename(
+  newCases_day_before = newCasesBySpecimenDate
+  ) %>%
 
 # Join `[area]_day_before` with `[area]_complete_covid_data`, where the column `specimen_date` of `[area]_complete_covid_data` is equal to the column `day_to_match` of `[area]_day_before
-dplyr::left_join(Dudley_complete_covid_data,., by= c("specimen_date" = "day_to_match")) %>%
+dplyr::left_join(
+  Dudley_complete_covid_data,., 
+  by= c("specimen_date" = "day_to_match")
+  ) %>%
 
 # number of new cases as a percentage of the number of new cases of the day before
-dplyr::mutate(percentage_of_new_cases = (newCasesBySpecimenDate/newCases_day_before)*100)%>%
+dplyr::mutate(
+  percentage_of_new_cases = (newCasesBySpecimenDate/newCases_day_before)*100
+  )%>%
 
 # Remove any trailing 0's from percentage_of_new_cases
-dplyr::mutate(percentage_of_new_cases = round(percentage_of_new_cases, 0)) %>%
+dplyr::mutate(
+  percentage_of_new_cases = round(
+    percentage_of_new_cases, 0
+    )
+  ) %>%
   
 # If there is any infinite values in the table, set these to NA 
 dplyr::mutate_if(is.numeric, list(~na_if(., Inf))) 
   
 
-kable(Dudley_covid_development_pipe_test[1:10,], "simple")
+Knitr::kable(
+  Dudley_covid_development_pipe_test[1:10,], 
+  "simple"
+  )
 
 
 ``` 
@@ -351,17 +425,29 @@ Using ```library(ggplot2)``` and ```library(gridExtra)``` we can visualise the c
 it is a line plot, instead of a scatter (```geom_point```) for example. 
 
 ```{r}
-percentage_change <- 
-  ggplot2::ggplot(data = Dudley_covid_development_pipe_test, mapping = aes(x = specimen_date, 
-format = "%Y-%m-%d", y = percentage_of_new_cases)) + geom_path() + 
-  scale_x_date(date_breaks ="1 month", date_labels = "%m")
+percentage_change <- ggplot2::ggplot(
+  data = Dudley_covid_development_pipe_test, mapping = aes(
+    x = specimen_date, 
+    format = "%Y-%m-%d", 
+    y = percentage_of_new_cases)) + 
+  geom_path() + 
+  scale_x_date(
+    date_breaks ="1 month", 
+    date_labels = "%m")
 
-cumulative <- 
-  ggplot2::ggplot(data = Dudley_covid_development_pipe_test, mapping = aes(x = specimen_date, 
-format = "%Y-%m-%d", y = cumCasesBySpecimenDate)) + geom_path() + 
-  scale_x_date(date_breaks ="1 month", date_labels = "%m")
+cumulative <- ggplot2::ggplot(
+  data = Dudley_covid_development_pipe_test, mapping = aes(
+    x = specimen_date, 
+    format = "%Y-%m-%d", 
+    y = cumCasesBySpecimenDate)) + 
+  geom_path() + 
+  scale_x_date(
+    date_breaks ="1 month", 
+    date_labels = "%m")
 
-gridExtra::grid.arrange(percentage_change,cumulative)
+gridExtra::grid.arrange(
+  percentage_change,cumulative
+  )
 
 ```
 
@@ -389,7 +475,9 @@ Note: Generally, renaming variables is bad practice. However, because this is a 
 names(pop)[names(pop) == "lad19_area_name"] <- "area_name"
 
 # Joining covid_data and pop, using area_name
-cov_pop <- dplyr::left_join(covid_data, pop)
+cov_pop <- dplyr::left_join(
+  covid_data, pop
+  )
 ```
 
 This is looking good! Covid data for an area, alongside its associated population data. 
@@ -405,16 +493,24 @@ Dudley_Plymouth_covid_data <-
   cov_pop %>% 
   
   # Filtering rows out of cov_pop that match the values in places
-  dplyr::filter(area_name %in% places) %>%
+  dplyr::filter(
+    area_name %in% places
+    ) %>%
   
   # Remove area_name and newcasesbyspeciendate
-  subset(select = -c(lad19_area_code, newCasesBySpecimenDate))%>%
+  subset(
+    select = -c(lad19_area_code, newCasesBySpecimenDate)
+    )%>%
   
   # Show cumulative cases as a percentage of the population of an area
-  dplyr::mutate(CumCases_percentage_of_pop = (cumCasesBySpecimenDate / area_population)*100)%>%
+  dplyr::mutate(
+    CumCases_percentage_of_pop = (cumCasesBySpecimenDate / area_population)*100
+    )%>%
   
   # Remove the area_population 
-  subset(select = -c(area_population, cumCasesBySpecimenDate))
+  subset( 
+    select = -c(area_population, cumCasesBySpecimenDate)
+    )
 ```
 
 We can then show the cumulative cases for Dudley as a proportion of the population. 
@@ -425,9 +521,26 @@ Always good to have some practise with ```pivot``` as it can seema  bit unintuit
 ```ggplot``` then takes ```Dudley_Plymouth_wide``` as the data and the new column ```Dudley``` from the pivot to form the figure seen below. 
 ```{r}
 Dudley_Plymouth_wide <- 
-  tidyr::pivot_wider(Dudley_Plymouth_covid_data, names_from = area_name, values_from = c(CumCases_percentage_of_pop))
+  tidyr::pivot_wider(
+    Dudley_Plymouth_covid_data, 
+    names_from = area_name, 
+    values_from = c(CumCases_percentage_of_pop)
+    )
 
-ggplot2::ggplot(data = Dudley_Plymouth_wide, mapping = aes(x = specimen_date, format = "%Y-%m-%d")) + geom_line(aes(y = Dudley), colour = "darkred") + scale_x_date(date_breaks ="1 month", date_labels = "%m") +xlab("Month in 2020") +ylab("Cumulative cases per population (%)")
+ggplot2::ggplot(
+  data = Dudley_Plymouth_wide, 
+  mapping = aes(
+    x = specimen_date, 
+    format = "%Y-%m-%d")) + 
+  geom_line(aes(
+    y = Dudley), 
+    colour ="darkred") +
+  scale_x_date(
+    date_breaks ="1 month", 
+    date_labels = "%m") +
+  xlab("Month in 2020") +
+  ylab("Cumulative cases/population (%)"
+  )
 ```
 
 Interestingly, the original data set ```Dudley_Plymouth_covid_data``` was formatted perfectly for ```ggplot``` to visualise multiple areas on the same plot. 
@@ -435,9 +548,24 @@ This works because ```ggplot``` takes all the data and colours it by the ```area
 
 ```{r}
 Dudley_Plymouth_long <- 
-  tidyr::pivot_longer(Dudley_Plymouth_wide, cols = -specimen_date, names_to = c("CumCases_percentage_of_pop"))
+  tidyr::pivot_longer(
+    Dudley_Plymouth_wide, 
+    cols = -specimen_date, 
+    names_to = c("CumCases_percentage_of_pop")
+    )
 
-ggplot2::ggplot(Dudley_Plymouth_covid_data, aes(x = specimen_date, format = "%Y-%m-%d", y = CumCases_percentage_of_pop, colour = area_name)) + geom_line() + scale_x_date(date_breaks ="1 month", date_labels = "%m") + xlab("Month in 2020") +ylab("Cumulative cases per population (%)")
+ggplot2::ggplot(
+  Dudley_Plymouth_covid_data, aes(
+    x = specimen_date, 
+    format = "%Y-%m-%d", 
+    y = CumCases_percentage_of_pop, 
+    colour = area_name)) +
+  geom_line() + 
+  scale_x_date(
+    date_breaks ="1 month", 
+    date_labels = "%m") + 
+  xlab("Month in 2020") +
+  ylab("Cumulative cases per population (%)")
 ```
 The analysis above displays cumulative cases for Dudley and Plymouth as a percentage of the areas population. This is important as Dudley has a population of 333,334 while Plymouth has a population of 272,728. This was performed for a more honest assessment between the 2 areas. Dudley and Plymouth display cases in March. Dudley's first case is 07/03/10, compared to Plymouths later date of 10/03/2020. From this point, both areas display a very similar pattern in the rise of cases. That is, a sharp increase until the middle of May, followed by a flattened curve throughout June, July and August until cases increase again in September. A sharper rise, similar to March occur in October. Though the pattern for both areas are the same, the proportion of cases when compared to the populations are very different. After the initial rise in April, 0.3% of Dudleys population has had a case. This is compared to 0.15% for Plymouth. Additionally, when the curve is flattened in the Summer months, ~0.4% of Dudley has has a case, compared to Plymouths ~0.25%. The second 'spike' in October only serves to widen this gap. The last data from both areas was 10/10/2020 where there was a ~0.3% difference between cumulative cases in Plymouth and Dudley.  
 
