@@ -447,8 +447,7 @@ kable_styling(latex_options = c("striped", "scale_down"))
 
 ``` 
 
-By way of an explanation, ```newCases_day_before``` states the cases the day before ```specimen_date ``` . ```newCasesBySpecimenDate``` states the cases on the ```specimen_date```. This allows 
-```newCases_day_before/newCasesBySpecimenDate``` to efficiently calculate change in COVID cases over 2 days, across 1 row.
+```newCases_day_before``` states the cases the day before ```specimen_date ``` . ```newCasesBySpecimenDate``` states the cases on the ```specimen_date```. This allows ```newCases_day_before/newCasesBySpecimenDate``` to efficiently calculate change in COVID cases over 2 days, across 1 row.
 
 Some issues arose when the next day (```newcases_day_before```) contained 0 cases. Dividing by 0 is ```inf``` or undefined, so these results were set to ```NA``` . These were not converted to 0 because ```inf != 0```.
 
