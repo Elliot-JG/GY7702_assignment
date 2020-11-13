@@ -1,3 +1,7 @@
+---
+output:
+  pdf_document: default
+---
 
 ---
 title: GY7702 Assignment
@@ -5,12 +9,14 @@ subtitle: MSc Satellite Data Science at the University of Leicester
 author: Elliot Greatrix
 date: 04/11/2020
 output: pdf_document
+urlcolor: blue
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 rm(list = ls())
 ```
+
 
 # Introduction 
 
@@ -29,6 +35,7 @@ library(tidyverse)
 library(palmerpenguins)
 library(dplyr)
 library(knitr)
+library(kableExtra)
 library(readr)
 library(tinytex)
 library(lubridate)
@@ -142,12 +149,15 @@ gentoo_heaviest <- pen %>%
     -body_mass_g
     )
   
-  # Return the 10 heaviest Gentoo penguins 
-kable(
-  (gentoo_heaviest[1:10,]), 
-  "simple")
-
 ```
+
+We can also use ```kable()``` to produce well-formatted output tables
+```{r}
+  # Return the 10 heaviest Gentoo penguins 
+kable(gentoo_heaviest[1:10,], format = "latex", booktabs = T) %>%
+kable_styling(latex_options = c("striped", "scale_down"))
+```
+
 
 
 
@@ -186,7 +196,8 @@ pen %>%
   
   # Display 3 example average_bill_lengths for each island 
   slice_head(n = 3)%>%
-knitr::kable()
+knitr::kable(format = "latex", booktabs = T) %>%
+kable_styling(latex_options = c("striped", "scale_down"))
 ```
 
 
@@ -248,7 +259,9 @@ pen %>%
   dplyr::mutate(max_bl_bd = max(bill_length_mm) / max(bill_depth_mm))%>%
   subset(select = -c(bill_length_mm, bill_depth_mm))%>%
   slice_head(n = 3)%>%
-knitr::kable()
+  
+knitr::kable(format = "latex", booktabs = T) %>%
+kable_styling(latex_options = c("striped", "scale_down"))
 ```
 
 # Question 3
@@ -281,17 +294,18 @@ Write the code necessary to
 * Replace the remaining NA values with zero 
 * Subset only the area assigned to me (Dudley) 
 * Drop the ```area_name``` column
-* Store the resulting table in a variable named ```[Dudley]_complete_covid_data```
+* Store the resulting table in a variable named ```Dudley_complete_covid_data```
 
-First, lets check how the data is delivered. We want each row to contain a date and an area
+First, lets check how the data is delivered
 ```{r, echo =FALSE}
-knitr::kable(
-  (covid_data[1:10,]), "simple"
-  )
+kable(covid_data[1:10,], format = "latex", booktabs = T) %>%
+kable_styling(latex_options = c("striped", "scale_down"))
 ```
 
 Next we want all areas to have a date, even if that area does not have any cases on that date. We can do this by using ```complete``` . 
 This will lead to NA values. Using ```fill``` , we can fill ```Na``` values with the next non ```NA``` value that is immediately above the ```NA``` value. This is called a ```down``` fill, and is the default of the ```fill()``` function.  
+
+We can ```replace()``` Na values with 0, filter for our area (Dudley) and finally drop the ```area_name``` column. 
 ```{r}
 Dudley_complete_covid_data <- 
   covid_data %>%
@@ -331,10 +345,10 @@ Dudley_complete_covid_data <-
     select = -c(area_name)
     )
 ```
+
 ```{r, echo=FALSE, message=FALSE}
-kable(
-  (Dudley_complete_covid_data[1:10,]), 
-  "simple")
+kable(Dudley_complete_covid_data[1:10,], format = "latex", booktabs = T) %>%
+kable_styling(latex_options = c("striped", "scale_down"))
 ```
 
 
@@ -360,14 +374,15 @@ as a percentage of the number of new cases of the day before
 * Store the resulting table in a variable named ```Dudley_covid_development```
 
 ```{r}
-# Create a copy of `[area]_complete_covid_data`, i.e., as another variable named `[area]_day_before`.
+# Create a copy of `[area]_complete_covid_data`, i.e., as another variable 
+# named `[area]_day_before`.
 Dudley_day_before <- Dudley_complete_covid_data
 
-# create a new column named `day_to_match`
+# create a new column named day_to_match
 Dudley_day_before$day_to_match <- 
   Dudley_day_before$specimen_date
 
-# that reports the day after the day reported in the column `specimen_date`,
+# Subtract 1 day from the day_to_match column 
 Dudley_day_before$day_to_match <- 
   as.Date(
     Dudley_day_before$day_to_match
@@ -378,7 +393,7 @@ If the above section contained one more step, we would have given serious though
 The next section however is a lot more complex, and the ```pipe``` makes it more readable and more efficient. 
 We'll carry out the operation first and then explain the output below. 
 ```{r}
-Dudley_covid_development_pipe_test <- 
+Dudley_covid_development <- 
   Dudley_day_before %>%
   
 # Drop the `specimen_date` and `cumCasesBySpecimenDate` columns from the 
@@ -420,10 +435,9 @@ dplyr::mutate_if(is.numeric, list(~na_if(., Inf)))
 ```
 
 ```{r, echo=FALSE, message=FALSE}
-Knitr::kable(
-  Dudley_covid_development_pipe_test[1:10,], 
-  "simple"
-  )
+kable(Dudley_covid_development[1:10,], format = "latex", booktabs = T) %>%
+kable_styling(latex_options = c("striped", "scale_down"))
+
 ``` 
 
 By way of an explanation, ```newCases_day_before``` 
@@ -443,7 +457,7 @@ For transparency, I will comment the ```ggplot()``` code below once
 percentage_change <- ggplot2::ggplot(
   
   # Specify the data 
-  data = Dudley_covid_development_pipe_test, mapping = aes(
+  data = Dudley_covid_development, mapping = aes(
     
     # Specify x axis and x axis format 
     x = specimen_date, 
@@ -470,7 +484,7 @@ percentage_change <- ggplot2::ggplot(
 
 # Repeat for cumulative graph 
 cumulative <- ggplot2::ggplot(
-  data = Dudley_covid_development_pipe_test, mapping = aes(
+  data = Dudley_covid_development, mapping = aes(
     x = specimen_date, 
     format = "%Y-%m-%d", 
     y = cumCasesBySpecimenDate)) + 
@@ -528,8 +542,8 @@ cov_pop <- dplyr::left_join(
 ```
 
 ```{r, echo = FALSE, message = FALSE}
-knitr::kable(cov_pop[1:10,], "simple")
-
+kable(cov_pop[1:10,], format = "latex", booktabs = T) %>%
+kable_styling(latex_options = c("striped", "scale_down"))
 ```
 
 This is looking good! Covid data for an area, alongside its associated population data. 
