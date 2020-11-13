@@ -36,10 +36,10 @@ Note, some of these (dplyr and ggplot2 for example) are included within the tidy
 
 ## :evergreen_tree: Data <a name="data"></a>
 The data used in this assignment is in [GY7702_data](https://github.com/Elliot-JG/GY7702_assignment/tree/main/GY7702_data). There are two .csv files:
-* covid19_cases_20200301_20201017.csv\
-UK Covid-19 daily and cumulative cases 01/03/2020 - 17/10/2020 
-* lad19_population.csv\
-UK population per local authority 
+* **covid19_cases_20200301_20201017.csv**\
+  + UK Covid-19 daily and cumulative cases 01/03/2020 - 17/10/2020 
+* **lad19_population.csv**\
+  + UK population per local authority 
 
 ## :lemon: Usage <a name="usage"></a>
 * To clone this git repository using [Git Bash](https://gitforwindows.org/):
@@ -58,4 +58,5 @@ $ git clone https://github.com/Elliot-JG/GY7702_assignment.git
   + While I am working in *Master_code.R* now, I predict that the work flow will move over mainly to this file 
 * **GY7702_Greatrix.pdf**
   + A .pdf file created when *GY7702_Greatrix.Rmd* is executed or *knitted*
-
+* **Notes.R**
+  + Archived code that I was too scared to delete at the time
