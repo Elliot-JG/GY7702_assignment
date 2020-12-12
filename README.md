@@ -41,6 +41,8 @@ The data used in this assignment is in [GY7702_data](https://github.com/Elliot-J
 * **lad19_population.csv**
   + UK population per local authority 
 
+This repository contains public sector information licensed under the [Open Government Licence v3.0](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/): covid19_cases_20200301_20201017.csv and lad19_population.csv. See also [Coronavirus (COVID-19) in the UK](https://coronavirus.data.gov.uk/details/cases) and [Office for National Statistics](https://geoportal.statistics.gov.uk/).
+
 ## :lemon: Usage <a name="usage"></a>
 * To clone this git repository using [Git Bash](https://gitforwindows.org/):
 ```r
